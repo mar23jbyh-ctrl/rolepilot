@@ -1,0 +1,10 @@
+Source ID: spin-technical-writer-5576d969
+Public source: https://jobs.lever.co/spinai/5576d969-5d54-485b-8611-12487d1cd3bd
+Retrieved: 2026-09-12.
+Role: Spin Technology Technical Writer. Location: Pune, India.
+
+Responsibilities: Create and maintain user documentation, release information, FAQs, screenshots and diagrams. Manage content lifecycle, versions and audits. Document end-to-end system and API workflows. Test backup, clone and restore procedures through user walkthroughs and collaborate with product and engineering.
+
+Requirements: At least three years of B2B SaaS technical writing. Bachelor-level degree in technical communication, English, computer science or engineering. Jira and Confluence, strong writing/editing, cloud and cybersecurity knowledge, and a writing portfolio. Salesforce, Slack and SSPM are nice-to-have.
+
+Original necessary-requirement summary, not the full webpage. Salary and work authorization are not inferred. No application is submitted. This is cross-role testing, not an assertion of suitability for a new graduate.

@@ -1,0 +1,12 @@
+{
+  "case_id": "observability",
+  "data_label": "ALL INVENTED TEST DATA",
+  "candidate_id": "OBS-001",
+  "allowed_background": "Final-year undergraduate; generic bachelor-level computing curriculum; no named institution, employment, contact or external portfolio.",
+  "projects": [
+    {"id": "beaconlab", "name": "BeaconLab", "dates": "2025-2026", "scope": "Three containerized demo services on Ubuntu and local single-node Kubernetes", "candidate_work": ["Python asyncio exporter; counters, latency histograms, queue gauge", "Bounded labels service/route/status class", "Structured JSON logs with request IDs; OpenTelemetry HTTP trace propagation", "Grafana dashboard, error-budget alert, debugging runbook", "Bounded queues, timeouts, cancellation, probes and graceful shutdown"], "invented_metrics": ["48 pytest cases", "600 synthetic requests/second for ten minutes", "3 ms p95 instrumentation overhead in an invented local test"], "tradeoffs": ["Histogram buckets versus client-side summaries", "Low label cardinality versus drill-down detail", "Retain error traces while limiting normal sampling"], "limits": ["No real production, upstream contribution, multi-cluster or cloud result", "Metrics are fictional, not release evidence"]},
+    {"id": "streamgauge", "name": "StreamGauge", "dates": "2026", "scope": "Local Go log collector", "candidate_work": ["Bounded worker pool; buffered channels; context cancellation", "Batched shipping with exponential backoff", "Table-driven parser tests; race detector; contributor and troubleshooting notes"], "invented_metrics": ["20 Go cases", "30-minute invented soak with no detected race"], "limits": ["No actual repository or deployed collector"]}
+  ],
+  "competition": {"name": "Fictional Student Telemetry Challenge", "year": 2026, "team_size": 4, "candidate_role": "Exporter and failure-injection tests", "invented_result": "Second of 12 fictional teams; competition itself does not exist"},
+  "answer_constraints": ["Do not create new projects, companies, schools, awards, years or achieved numeric results", "Use conditional explanations for unfamiliar proposed designs", "Admit absence of production experience", "Discuss mechanisms and tradeoffs without implying they were measured"]
+}

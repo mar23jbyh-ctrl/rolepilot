@@ -1,0 +1,2 @@
+# Install after requirements.txt to run the offline regression suite.
+pytest==9.1.1

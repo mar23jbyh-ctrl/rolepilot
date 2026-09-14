@@ -1,0 +1,10 @@
+Source ID: nmi-product-data-5232258008
+Public source: https://job-boards.greenhouse.io/nmi/jobs/5232258008
+Retrieved: 2026-09-12.
+Role: NMI Product Data Analyst - Acquiring Operations. Location: Remote US.
+
+Responsibilities: Use SQL and Tableau to investigate product KPIs and adoption. Analyze acquiring operations, transaction quality, settlement and reconciliation. Translate findings into decisions with product, operations and other stakeholders. Support A/B experiments and improve repeatable reporting through automation.
+
+Requirements: Practical SQL and Tableau skills, product and operational analytics, and cross-functional communication. Understand metric definitions and explain business implications of data quality and transaction outcomes.
+
+The supplied public-page facts do not state an explicit minimum number of experience years; none is invented here. This is an original short summary. Salary, work authorization and hiring outcomes are not inferred. No application is submitted.

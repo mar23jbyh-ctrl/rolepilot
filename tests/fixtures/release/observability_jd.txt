@@ -1,0 +1,10 @@
+Source ID: canonical-observability-7455749
+Public source: https://job-boards.greenhouse.io/canonicaljobs/jobs/7455749
+Retrieved: 2026-09-12.
+Role: Canonical Junior Software Developer - Observability. Region: EMEA / Americas.
+
+Responsibilities: Build and maintain observability software using Python and Go for Ubuntu and Kubernetes environments. Work with monitoring metrics, logs and distributed tracing. Test changes, debug failures, write documentation and collaborate with colleagues and the software community.
+
+Requirements: Bachelor-level education, proficient Python, foundational Go, and familiarity with Linux and containers. Demonstrate practical engineering, testing and clear communication around monitoring systems.
+
+This is an original necessary-requirement summary, not a copy of the complete page. Salary and work authorization are not inferred. No application is submitted.

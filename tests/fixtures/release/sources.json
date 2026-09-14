@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "retrieval_date": "2026-09-12",
+  "provenance": "Short requirement summaries with source URLs and retrieval dates; candidate materials are fictional.",
+  "copyright_policy": "Original short requirement summaries only; no complete pages, salaries, application submissions or applicant personal information.",
+  "synthetic_policy": "ALL INVENTED TEST DATA: resumes, project histories, competitions and candidate metrics are fictional fixtures, not actual accomplishments or evaluation results.",
+  "sources": [
+    {
+      "source_id": "canonical-observability-7455749",
+      "case_id": "observability",
+      "company": "Canonical",
+      "title": "Junior Software Developer - Observability",
+      "url": "https://job-boards.greenhouse.io/canonicaljobs/jobs/7455749",
+      "retrieved_on": "2026-09-12",
+      "location": "EMEA / Americas",
+      "responsibilities": [
+        "Develop Python/Go observability software for Ubuntu and Kubernetes",
+        "Work with metrics, logs and tracing",
+        "Test, debug, document and collaborate with the community"
+      ],
+      "requirements": [
+        "Bachelor-level qualification",
+        "Proficient Python and foundational Go",
+        "Linux and container familiarity"
+      ],
+      "not_inferred": [
+        "Salary",
+        "Visa eligibility",
+        "Hiring outcome",
+        "Additional experience-year requirements"
+      ],
+      "jd_file": "observability_jd.txt",
+      "resume_file": "observability_resume.txt",
+      "factbook_file": "observability_factbook.json"
+    },
+    {
+      "source_id": "nmi-product-data-5232258008",
+      "case_id": "product_data",
+      "company": "NMI",
+      "title": "Product Data Analyst - Acquiring Operations",
+      "url": "https://job-boards.greenhouse.io/nmi/jobs/5232258008",
+      "retrieved_on": "2026-09-12",
+      "location": "Remote US",
+      "responsibilities": [
+        "Analyze product adoption and KPIs using SQL/Tableau",
+        "Investigate transaction quality, settlement and reconciliation",
+        "Work across teams; support experiments and automation"
+      ],
+      "requirements": [
+        "SQL and Tableau",
+        "Product and operational analytics",
+        "Cross-functional communication"
+      ],
+      "experience_years": null,
+      "not_inferred": [
+        "Explicit minimum experience years (not stated in the supplied page facts)",
+        "Salary",
+        "US work authorization",
+        "Hiring outcome"
+      ],
+      "jd_file": "product_data_jd.txt",
+      "resume_file": "product_data_resume.txt",
+      "factbook_file": "product_data_factbook.json"
+    },
+    {
+      "source_id": "spin-technical-writer-5576d969",
+      "case_id": "technical_writing",
+      "company": "Spin Technology",
+      "title": "Technical Writer",
+      "url": "https://jobs.lever.co/spinai/5576d969-5d54-485b-8611-12487d1cd3bd",
+      "retrieved_on": "2026-09-12",
+      "location": "Pune, India",
+      "responsibilities": [
+        "Produce user documentation, release material, FAQs, screenshots and diagrams",
+        "Manage content lifecycle, version control and audits",
+        "Validate backup, clone and restore walkthroughs",
+        "Document end-to-end system and API workflows"
+      ],
+      "requirements": [
+        "3+ years of B2B SaaS technical writing",
+        "Bachelor-level degree in technical communication, English, computer science or engineering",
+        "Jira and Confluence",
+        "Writing/editing and cloud/cybersecurity knowledge",
+        "Writing portfolio"
+      ],
+      "nice_to_have": [
+        "Salesforce",
+        "Slack",
+        "SSPM"
+      ],
+      "experience_years_minimum": 3,
+      "student_application_fit": "Not asserted; three-direction fixture coverage is not a list of jobs suitable for the student.",
+      "not_inferred": [
+        "Salary",
+        "India work authorization",
+        "Hiring outcome"
+      ],
+      "jd_file": "technical_writing_jd.txt",
+      "resume_file": "technical_writing_resume.txt",
+      "factbook_file": "technical_writing_factbook.json"
+    }
+  ]
+}

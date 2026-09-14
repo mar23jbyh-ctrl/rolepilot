@@ -1,0 +1,72 @@
+{
+  "schema_version": "historical-intent-metadata-v1",
+  "description": "Derived labels only from a historical replay; no questions, answers, owner or session identifiers. Frozen outputs are not new model evaluations; runtime command behavior has separate synthetic tests.",
+  "source_sha256": "0477d1afca4fafbdb981d307f31cc1f3b6056c4b387e4d589eefcf8c0df0393a",
+  "total": 208,
+  "cohorts": [
+    {
+      "count": 184,
+      "old_explain": false,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "answer"
+    },
+    {
+      "count": 4,
+      "old_explain": false,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "request_explanation"
+    },
+    {
+      "count": 1,
+      "old_explain": false,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "request_clarification"
+    },
+    {
+      "count": 5,
+      "old_explain": false,
+      "old_stop": true,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "answer"
+    },
+    {
+      "count": 8,
+      "old_explain": true,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": true,
+      "new_intent": "request_explanation"
+    },
+    {
+      "count": 1,
+      "old_explain": true,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "answer"
+    },
+    {
+      "count": 1,
+      "old_explain": true,
+      "old_stop": true,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "off_topic"
+    },
+    {
+      "count": 4,
+      "old_explain": false,
+      "old_stop": false,
+      "new_stop_command": false,
+      "genuine_explain": false,
+      "new_intent": "off_topic"
+    }
+  ]
+}

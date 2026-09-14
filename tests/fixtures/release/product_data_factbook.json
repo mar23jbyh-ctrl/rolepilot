@@ -1,0 +1,12 @@
+{
+  "case_id": "product_data",
+  "data_label": "ALL INVENTED TEST DATA",
+  "candidate_id": "DATA-001",
+  "allowed_background": "Final-year undergraduate; generic statistics/computing coursework; no institution, employment, contact or US eligibility claim.",
+  "projects": [
+    {"id": "merchantpulse", "name": "MerchantPulse", "dates": "2025-2026", "scope": "Fictional transaction, settlement and merchant tables", "candidate_work": ["120,000 invented rows with webhook duplicates, refunds and settlement delays", "Deduplicate transaction/event IDs; avoid refund join fan-out", "Approval-rate denominator eligible authorization attempts; settlement lag; reconciliation break rate", "Tableau segment/channel/date filters and metric dictionary", "Full outer join by reference/currency; missing-side and amount-mismatch exception audit", "Reporting watermark and business-day/currency boundaries"], "invented_metrics": ["36 SQL checks", "All 40 seeded exceptions detected in the fictional fixture"], "limits": ["No real payment/customer data or regulated production operations"]},
+    {"id": "activatelab", "name": "ActivateLab", "dates": "2026", "scope": "Fictional 2,000-merchant onboarding exercise", "candidate_work": ["Seven-day first-successful-transaction activation definition", "Stable-hash group assignment; sample-ratio mismatch check", "Refund rate/support burden guardrails; confidence intervals and assumptions", "Python refresh checks with date/row-count bounds and idempotent outputs"], "invented_metrics": ["42 versus 46 percent activation; significance NOT claimed", "Fictional manual refresh 40 versus 12 minutes"], "limits": ["No real experiment, business improvement or significance evidence"]}
+  ],
+  "competition": {"name": "Fictional Campus Payment Analytics Cup", "year": 2026, "team_size": 4, "candidate_role": "Metric definitions and exception analysis", "invented_result": "Third of 15 fictional teams; competition itself does not exist"},
+  "answer_constraints": ["Do not invent employers, real customer impact, certifications, new projects or achieved numbers", "Separate a proposed statistical method from a performed analysis", "Do not claim significance for the fictional activation figures", "Use synthetic data only"]
+}

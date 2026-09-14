@@ -1,0 +1,69 @@
+# ---- 环境与依赖 ----
+.venv/
+venv/
+env/
+frontend/node_modules/
+
+# ---- Python 缓存与构建产物 ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.tsbuildinfo
+
+# 本地编程辅助和临时审计资料，不属于应用源码
+.codex/
+
+# ---- 密钥与环境变量（.env.example 仍入库） ----
+.env
+.env.local
+.env.*
+!.env.example
+
+# ---- 运行期数据（程序生成，不入库） ----
+data/*
+data/uploads/
+# Local official language models, not application source.
+data/ocr/
+data/sessions*.db*
+data/checkpoints*.db*
+data/anonymous_auth.db*
+*.db*
+*.log
+frontend/dist/
+# 评测产物（scripts/ 下的评测脚本生成，可随时重跑）
+data/*.json
+
+# ---- 维护者个人验收与分析材料（不属于用户运行所需源码） ----
+# 这些文件保留在本地用于复盘；公开发行时不要使用 git add -f 重新加入。
+docs/release/
+scripts/acceptance_*.py
+scripts/build_guard_cases.py
+scripts/cost_control_verify.py
+scripts/delivery_preflight.py
+scripts/delivery_smoke.py
+scripts/eval_*.py
+scripts/ocr_benchmark.py
+scripts/ocr_runtime_verify.py
+scripts/privacy_verify.py
+scripts/release_*.py
+scripts/replay_intent.py
+scripts/reproduce_*.py
+scripts/migrate_*.py
+# Helpers required by public regression checks and documented validation commands.
+!scripts/acceptance_cleanup.py
+!scripts/acceptance_finish.py
+!scripts/delivery_preflight.py
+!scripts/delivery_smoke.py
+!scripts/ocr_benchmark.py
+!scripts/release_run.py
+!scripts/release_score_replay.py
+!scripts/release_server.py
+
+# ---- 编辑器 / 系统 ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

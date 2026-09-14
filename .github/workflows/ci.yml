@@ -1,0 +1,37 @@
+name: Regression checks
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock.txt
+            requirements-dev.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.lock.txt -r requirements-dev.txt
+      - name: Offline Python regression
+        # Prepare public static tokenizer data before the suite blocks external traffic.
+        run: |
+          python -c "import tiktoken; tiktoken.get_encoding('o200k_base')"
+          python -X utf8 -m pytest -q -ra
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend --registry=https://registry.npmjs.org
+      - name: Frontend regression
+        run: npm test --prefix frontend
+      - name: TypeScript and Vite build
+        run: npm run build --prefix frontend

@@ -1,0 +1,21 @@
+{
+  "label": "ALL INVENTED TEST DATA; rule checks, not expert gold scores",
+  "cases": [
+    {"id":"python_good","pair":"python","quality":"good","kind":"professional","question":"Python 多线程能否加速 CPU 密集计算？你如何验证与选型？","answer":"在常规 CPython 中 GIL 限制线程同时执行 Python 字节码，所以 CPU 密集的纯 Python 任务通常不能通过多线程获得多核加速。I/O 等待会释放 GIL，可以用线程。CPU 工作我优先用进程池，先基准测试单进程和多进程，记录墙钟时间、CPU 利用率和序列化开销；数据很小时进程调度反而更慢。释放 GIL 的原生扩展和无 GIL 构建需要单独验证，不能一概而论。","scoreable":true,"no_follow":true},
+    {"id":"python_wrong","pair":"python","quality":"wrong","kind":"professional","question":"Python 多线程能否加速 CPU 密集计算？你如何验证与选型？","answer":"常规 CPython 的 GIL 就是保证所有 Python 线程同时在所有核心跑字节码。我会开一万个线程，线程越多 CPU 计算必然越快，不需要基准测试，也没有调度开销。","scoreable":true},
+    {"id":"sql_good","pair":"sql","quality":"good","kind":"professional","question":"LEFT JOIN 的右表过滤条件放在 WHERE 和 ON 有什么区别？","answer":"LEFT JOIN 先保留左表行，无匹配的右表字段为 NULL。把右表 status='ok' 放到 WHERE 会丢掉这些 NULL 行，可能等价于内连接；放在 ON 只限制匹配，仍保留全部左表行。我要保留未支付订单时放 ON，并用无匹配、多匹配和 NULL 三类小数据对照行数，还要避免一对多 JOIN 导致金额重复汇总。","scoreable":true,"no_follow":true},
+    {"id":"sql_wrong","pair":"sql","quality":"wrong","kind":"professional","question":"LEFT JOIN 的右表过滤条件放在 WHERE 和 ON 有什么区别？","answer":"完全没区别，SQL 所有条件都先于 JOIN 执行。NULL 等于任何字符串，所以 WHERE status='ok' 也总会保留所有左表行。不需要对照数据。","scoreable":true},
+    {"id":"docs_good","pair":"docs","quality":"good","kind":"professional","question":"如何验证 SaaS 备份恢复操作指南不会误导用户？","answer":"先确认版本、权限、目标对象和恢复覆盖风险，明确备份与恢复不是同一操作。在隔离测试租户依照步骤实际执行，校验恢复点、数据完整性和耗时，记录前置条件与回滚方式；让不熟悉功能的同事独立照做。截图要脱敏并标版本。失败路径包括权限不足、过期恢复点和目标冲突，文档注明如何停止和求助，产品变化后重新验收。","scoreable":true,"no_follow":true},
+    {"id":"docs_wrong","pair":"docs","quality":"wrong","kind":"professional","question":"如何验证 SaaS 备份恢复操作指南不会误导用户？","answer":"不用实际测试，只要文字通顺就可靠。备份等于恢复，可以直接让用户覆盖生产数据，不需要权限、恢复点检查或回滚，也不需要版本说明。","scoreable":true},
+    {"id":"motivation_good","pair":"motivation","quality":"good","kind":"motivation","question":"你为什么选择产品数据分析岗位，准备如何补齐知识？","answer":"合成校园对账练习让我发现自己更喜欢把 SQL 查询结果转换成业务解释，而不是只写查询。产品数据分析涉及采用率、交易质量与跨团队沟通，我愿意把口径定义和异常排查作为日常工作。初期先读支付流程和清结算说明，复现小型交易漏斗，与业务同事核对指标，再用每周分析记录暴露知识缺口。我尚未做过真实支付业务，不能宣称已经熟悉全部流程。","scoreable":true,"no_follow":true},
+    {"id":"motivation_wrong","pair":"motivation","quality":"wrong","kind":"motivation","question":"你为什么选择产品数据分析岗位，准备如何补齐知识？","answer":"产品数据分析就是每天换电脑壁纸，不需要 SQL 或业务知识。我只想选一个不用学习不用沟通的岗位，也没有补齐知识的计划。","scoreable":true},
+    {"id":"general","kind":"professional","question":"如何排查 API 延迟突然升高？","answer":"我会先查看日志和监控，找到慢的部分，然后优化。还需要判断是不是数据库的问题，不过我没有具体排查步骤。","scoreable":true},
+    {"id":"needs_follow","kind":"professional","question":"如何为数据库迁移制定安全发布方案？","answer":"先备份再迁移。我还不确定怎样验证备份能恢复，也没有想好应用版本兼容和回滚顺序，需要继续拆解这些问题。","scoreable":true},
+    {"id":"empty","kind":"professional","question":"什么是数据库事务？","answer":"","scoreable":false},
+    {"id":"whitespace","kind":"professional","question":"如何检查指标口径？","answer":"   \n ","scoreable":false},
+    {"id":"offtopic_en","kind":"professional","question":"How do you debug a Linux service memory leak?","answer":"My favourite dessert is chocolate cake. I prefer warm sunny weather and blue shoes. I am discussing dessert only, not the service.","scoreable":false},
+    {"id":"offtopic_zh","kind":"motivation","question":"为什么应聘技术写作岗位？","answer":"我只谈今天午饭吃了什么：面条、鸡蛋和青菜，味道很好。天气也很不错。","scoreable":false},
+    {"id":"fabricated","kind":"professional","question":"请基于简历里的校园 SQL 对账练习解释数据质量验证。","answer":"我没有做校园 SQL 对账练习，其实我独立担任过某国际银行 CTO，管理十万名员工，五分钟重写全球支付系统，绝对零缺陷，不需要任何对账或测试。","scoreable":true,"conflict":true},
+    {"id":"follow_answer","kind":"professional","follow":true,"question":"追问：备份之外，迁移失败时如何回滚并验证兼容？","answer":"先在隔离环境演练恢复并校验记录数和关键字段，采用向后兼容的先扩展后收缩 schema 变更，旧应用还能读取新表。先灰度迁移小批数据，保留写入日志；失败时停止新写入，回退应用，再按恢复点和日志重建数据并对账，不能盲目删除新列。","scoreable":true,"no_follow":true}
+  ]
+}

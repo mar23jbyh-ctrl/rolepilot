@@ -1,0 +1,4086 @@
+{
+  "version": "1.0",
+  "description": "23 个职能域 × 每域 4 题 + 易混淆题 + 近邻镜像题，共 103 条 case。",
+  "fixture_note": "profiles.*.jd_items / resume_projects / reference_ids 仅用于评测夹具（D1 票需要判断来源是否有效），产品画像（state.role_profile）不包含这三个字段。",
+  "legend": {
+    "category": {
+      "same_domain": "同域题，期望保留",
+      "cross_domain_a": "跨域题·无来源（D1 成立）→ 期望丢弃（D1+D3）",
+      "cross_domain_b": "跨域题·有来源（D1 不成立）→ 期望保留（设计取舍：仅 D3 一票）",
+      "confusable": "易混淆的合法题，期望保留（旧版 4 组词表会误删）"
+    },
+    "expected_stage": "binding | whitelist_hit | exempt | strong_signal | arbiter | unverified | legacy",
+    "design_notes": [
+      "对照点 1｜医疗-病案管理：修复前被旧词表判成 tech 的受害者，同域题必须保留、跨域题必须丢弃。",
+      "对照点 2｜技术-算法研究：'模型训练' 是它的考察重心；同一题面在医疗护理岗下必须被判跨域。",
+      "对照点 3｜金融-风险管理：'风控模型/评分卡' 是它的考察重心，验证宽泛词'模型'不再被一刀切禁止。",
+      "对照点 4｜四组近邻岗位（技术后端↔前端、法律诉讼↔合规、教育教学↔教研、运营内容↔增长）：镜像题验证同行业不同职能域也能区分。",
+      "CD-A 与 CD-B 必须分开统计：CD-B 的 keep 是三票制'宁可保留'偏置的量化体现，不是缺陷。"
+    ]
+  },
+  "profiles": {
+    "技术-后端开发": {
+      "job_title": "Java 后端开发工程师",
+      "domain": "技术-后端开发",
+      "domain_slug": "tech-backend",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "服务端接口开发与优化",
+        "数据库与缓存设计",
+        "线上稳定性保障"
+      ],
+      "key_skills": [
+        "Java",
+        "MySQL",
+        "Redis",
+        "分布式"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "服务端接口与数据设计",
+          "subtopics": [
+            "接口幂等与重试设计",
+            "数据库索引与慢查询优化",
+            "缓存一致性与失效策略"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        },
+        {
+          "key": "f2",
+          "name": "线上稳定性与排障",
+          "subtopics": [
+            "接口超时排查顺序",
+            "线程池与连接池参数",
+            "灰度发布与回滚方案"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "临床诊断",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "临床诊断",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上 Java 服务端开发经验",
+        "熟悉 MySQL 索引优化与缓存设计"
+      ],
+      "resume_projects": [
+        "订单服务重构：负责接口幂等与缓存一致性",
+        "支付网关接入：负责超时与重试策略"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "技术-前端开发": {
+      "job_title": "前端开发工程师",
+      "domain": "技术-前端开发",
+      "domain_slug": "tech-frontend",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "业务前端开发",
+        "性能与体验优化",
+        "组件库与工程化建设"
+      ],
+      "key_skills": [
+        "TypeScript",
+        "React",
+        "性能优化",
+        "工程化"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "前端性能与体验优化",
+          "subtopics": [
+            "首屏加载性能优化",
+            "交互卡顿与渲染优化",
+            "错误监控与埋点上报"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        },
+        {
+          "key": "f2",
+          "name": "组件与工程化",
+          "subtopics": [
+            "组件拆分与复用策略",
+            "前端构建与打包优化",
+            "跨端适配与浏览器兼容"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "临床诊断"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "临床诊断"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上前端开发经验",
+        "熟悉性能优化与组件化建设"
+      ],
+      "resume_projects": [
+        "电商首页性能治理：负责首屏优化",
+        "组件库建设：负责组件拆分规范"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "技术-数据工程": {
+      "job_title": "数据工程师",
+      "domain": "技术-数据工程",
+      "domain_slug": "tech-data",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "离线与实时数据管道建设",
+        "数仓建模",
+        "数据质量与任务稳定性"
+      ],
+      "key_skills": [
+        "SQL",
+        "Spark",
+        "数仓建模",
+        "数据质量"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "数据管道与数仓建模",
+          "subtopics": [
+            "离线数据管道设计",
+            "数仓分层建模规范",
+            "数据质量校验规则"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "任务稳定性与成本",
+          "subtopics": [
+            "任务延迟与失败重试",
+            "数据倾斜处理方案",
+            "计算资源成本优化"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "诉讼流程",
+        "临床诊断",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "诉讼流程",
+        "临床诊断",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上数据管道或数仓建设经验",
+        "熟悉任务调度与数据质量治理"
+      ],
+      "resume_projects": [
+        "用户行为数仓建设：负责分层建模与质量校验",
+        "实时埋点管道：负责延迟与失败重试"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "技术-AI应用": {
+      "job_title": "AI 应用工程师",
+      "domain": "技术-AI应用",
+      "domain_slug": "tech-ai",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "RAG 检索链路开发与调优",
+        "Agent 与工具调用编排",
+        "提示词与评估集建设"
+      ],
+      "key_skills": [
+        "Python",
+        "LangChain",
+        "向量检索",
+        "提示词工程"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "RAG 检索链路",
+          "subtopics": [
+            "向量检索召回优化",
+            "重排与融合策略",
+            "文本切分与元数据设计"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "Agent 与提示词工程",
+          "subtopics": [
+            "工具调用编排与兜底",
+            "提示词与评估集建设",
+            "线上幻觉与超时排错"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "临床诊断"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "临床诊断"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "一年以上大模型应用开发经验",
+        "熟悉 RAG 检索链路与 Agent 编排"
+      ],
+      "resume_projects": [
+        "企业知识库问答：负责检索召回与重排",
+        "Agent 工单助手：负责工具调用编排"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "技术-算法研究": {
+      "job_title": "算法研究员",
+      "domain": "技术-算法研究",
+      "domain_slug": "tech-algo",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "模型训练与效果优化",
+        "实验设计与论文复现",
+        "训练成本与效率优化"
+      ],
+      "key_skills": [
+        "PyTorch",
+        "模型训练",
+        "实验设计"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "模型训练与评估",
+          "subtopics": [
+            "模型训练数据构造",
+            "评估指标与离线评测",
+            "过拟合与正则化策略"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "实验与迭代",
+          "subtopics": [
+            "消融实验设计",
+            "训练成本与显存优化",
+            "论文复现与基线对齐"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "诉讼流程",
+        "财务核算",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "具备模型训练与评估的完整项目经验",
+        "能独立设计消融实验并对齐基线"
+      ],
+      "resume_projects": [
+        "文本分类模型迭代：负责数据构造与离线评测",
+        "论文复现项目：负责消融实验与基线对齐"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "医疗-临床护理": {
+      "job_title": "临床护士",
+      "domain": "医疗-临床护理",
+      "domain_slug": "med-nursing",
+      "industry": "医疗健康",
+      "core_responsibilities": [
+        "病房巡视与生命体征监测",
+        "医嘱执行与给药核对",
+        "护理文书书写"
+      ],
+      "key_skills": [
+        "基础护理操作",
+        "病情观察",
+        "急救配合"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "临床护理操作",
+          "subtopics": [
+            "静脉输液与给药核对",
+            "生命体征监测要点",
+            "无菌操作规范"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        },
+        {
+          "key": "f2",
+          "name": "病情观察与应急",
+          "subtopics": [
+            "病情恶化早期识别",
+            "急救流程配合",
+            "医患沟通与告知"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "持护士执业资格并具备临床护理经验",
+        "能独立完成基础护理操作与病区应急配合"
+      ],
+      "resume_projects": [
+        "内科病区护理：负责给药核对与生命体征监测",
+        "病区急救演练：负责流程配合与记录"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "医疗-病案管理": {
+      "job_title": "病案信息专员",
+      "domain": "医疗-病案管理",
+      "domain_slug": "med-records",
+      "industry": "医疗健康",
+      "core_responsibilities": [
+        "出院病案整理装订与归档",
+        "病案首页信息审核与质控",
+        "病案数据统计与编码维护"
+      ],
+      "key_skills": [
+        "病案首页质控",
+        "ICD 编码",
+        "医学统计"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "病案首页与编码",
+          "subtopics": [
+            "病案首页信息审核",
+            "ICD 编码规则应用",
+            "病案质控与整改"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "病案归档与数据利用",
+          "subtopics": [
+            "出院病案整理装订",
+            "病案借阅与归档流程",
+            "病案数据统计口径"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "诉讼流程",
+        "财务核算"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "熟悉病案首页质控与 ICD 编码规则",
+        "负责出院病案整理归档与数据统计"
+      ],
+      "resume_projects": [
+        "病案首页质控项目：负责审核与整改",
+        "ICD 编码库维护：负责编码规则校对"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "法律-诉讼": {
+      "job_title": "诉讼律师",
+      "domain": "法律-诉讼",
+      "domain_slug": "law-litigation",
+      "industry": "法律服务",
+      "core_responsibilities": [
+        "案件事实梳理与证据组织",
+        "法律文书起草",
+        "出庭应诉",
+        "客户沟通与风险提示"
+      ],
+      "key_skills": [
+        "民商法",
+        "证据规则",
+        "法律检索",
+        "庭审表达"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "合同审查实务",
+          "subtopics": [
+            "合同主体资格审查",
+            "违约责任与违约金",
+            "争议解决条款"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        },
+        {
+          "key": "f2",
+          "name": "诉讼流程与证据",
+          "subtopics": [
+            "举证期限与证据交换",
+            "庭审质证要点",
+            "管辖与送达"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f3",
+          "name": "法律检索与文书",
+          "subtopics": [
+            "法律检索方法",
+            "法律数据库检索",
+            "法律文书起草规范"
+          ],
+          "why_relevant": "来自 JD 要求 [2]",
+          "source_jd_ref": "2"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "财务核算"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "财务核算"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上民商事诉讼经验",
+        "独立完成合同审核与法律文书起草",
+        "具备法律检索与案例分析能力"
+      ],
+      "resume_projects": [
+        "合同管理台账系统：负责合同审核流程梳理与风险点归档",
+        "某买卖合同纠纷案：负责证据组织与庭审准备"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "法律-合规": {
+      "job_title": "企业合规专员",
+      "domain": "法律-合规",
+      "domain_slug": "legal-compliance",
+      "industry": "法律服务",
+      "core_responsibilities": [
+        "合规体系建设与制度落地",
+        "合规审查与风险识别",
+        "内部调查与培训宣导"
+      ],
+      "key_skills": [
+        "合规管理",
+        "风险识别",
+        "内控流程"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "合规体系与制度建设",
+          "subtopics": [
+            "合规风险识别流程",
+            "内部制度与流程落地",
+            "合规培训与宣导"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "合规审查与调查",
+          "subtopics": [
+            "合同合规性审查要点",
+            "反商业贿赂审查",
+            "内部调查与取证流程"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上企业合规或法务经验",
+        "能独立开展合规审查与内部调查"
+      ],
+      "resume_projects": [
+        "合规体系搭建：负责风险识别与制度建设",
+        "反商业贿赂专项：负责审查与内部调查"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "教育-学科教学": {
+      "job_title": "小学语文教师",
+      "domain": "教育-学科教学",
+      "domain_slug": "edu",
+      "industry": "教育",
+      "core_responsibilities": [
+        "语文课堂授课",
+        "作业批改与反馈",
+        "学情分析与分层辅导"
+      ],
+      "key_skills": [
+        "课堂设计",
+        "阅读理解教学",
+        "写作指导"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "课堂教学设计",
+          "subtopics": [
+            "课堂提问设计",
+            "师生问答互动",
+            "板书与课件设计"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "阅读与写作教学",
+          "subtopics": [
+            "阅读理解训练方法",
+            "写作批改与反馈",
+            "学情分析与分层教学"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "具备小学语文学科教学经验",
+        "能独立设计课堂并开展阅读写作教学"
+      ],
+      "resume_projects": [
+        "三年级语文阅读课教研项目：负责课堂设计",
+        "作文批改标准建设：负责反馈模板与分层辅导"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "教育-教研": {
+      "job_title": "学科教研员",
+      "domain": "教育-教研",
+      "domain_slug": "edu-research",
+      "industry": "教育",
+      "core_responsibilities": [
+        "组织教研活动与集体备课",
+        "课程资源开发",
+        "课堂诊断与教学改进"
+      ],
+      "key_skills": [
+        "教研组织",
+        "课程开发",
+        "课堂观察"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "教研活动与课程开发",
+          "subtopics": [
+            "教研活动组织流程",
+            "课程资源开发规范",
+            "教师培训方案设计"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "教学质量与评价",
+          "subtopics": [
+            "课堂观察与诊断方法",
+            "学业质量评价方案",
+            "教学改进跟踪机制"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "具备学科教研或教师培训经验",
+        "能独立组织教研活动并开展课堂诊断"
+      ],
+      "resume_projects": [
+        "区级语文教研活动：负责组织与资源开发",
+        "课堂诊断项目：负责观察量表与改进跟踪"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "财务-审计": {
+      "job_title": "审计师",
+      "domain": "财务-审计",
+      "domain_slug": "fin-audit",
+      "industry": "财务与专业服务",
+      "core_responsibilities": [
+        "审计程序设计与执行",
+        "审计底稿编制",
+        "重大错报风险评估"
+      ],
+      "key_skills": [
+        "审计程序",
+        "底稿编制",
+        "风险评估"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "审计程序与底稿",
+          "subtopics": [
+            "审计程序设计与执行",
+            "审计底稿编制规范",
+            "函证与盘点程序"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "报表与风险识别",
+          "subtopics": [
+            "财务报表勾稽关系",
+            "重大错报风险评估",
+            "内控缺陷识别与沟通"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上审计项目经验",
+        "能独立完成审计底稿与风险识别"
+      ],
+      "resume_projects": [
+        "年度财务报表审计：负责底稿与函证",
+        "内控专项审计：负责缺陷识别与沟通"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "财务-税务": {
+      "job_title": "税务专员",
+      "domain": "财务-税务",
+      "domain_slug": "fin-tax",
+      "industry": "财务与专业服务",
+      "core_responsibilities": [
+        "各税种申报与缴纳",
+        "汇算清缴与纳税调整",
+        "税务风险应对"
+      ],
+      "key_skills": [
+        "税务申报",
+        "汇算清缴",
+        "发票管理"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "税务申报与合规",
+          "subtopics": [
+            "增值税申报要点",
+            "企业所得税汇算清缴",
+            "发票管理与风险"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "税务筹划与沟通",
+          "subtopics": [
+            "税收优惠适用条件",
+            "税务稽查应对流程",
+            "跨部门沟通与资料准备"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上税务申报经验",
+        "熟悉汇算清缴与税务风险应对"
+      ],
+      "resume_projects": [
+        "增值税申报：负责进销项核对",
+        "汇算清缴项目：负责纳税调整与资料准备"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "互联网-内容运营": {
+      "job_title": "新媒体内容运营",
+      "domain": "互联网-内容运营",
+      "domain_slug": "ops-content",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "内容选题与生产",
+        "账号矩阵运营",
+        "内容数据复盘"
+      ],
+      "key_skills": [
+        "选题策划",
+        "文案撰写",
+        "数据复盘"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "内容策划与生产",
+          "subtopics": [
+            "选题策划与热点跟进",
+            "图文内容撰写规范",
+            "短视频脚本设计"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "内容数据与用户互动",
+          "subtopics": [
+            "内容数据复盘方法",
+            "账号矩阵运营策略",
+            "用户评论与私信互动",
+            "客户对话与需求挖掘"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上新媒体内容运营经验",
+        "能独立完成选题、撰写与数据复盘"
+      ],
+      "resume_projects": [
+        "小红书账号运营：负责选题与图文产出",
+        "短视频栏目：负责脚本与数据复盘"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "互联网-用户增长": {
+      "job_title": "用户增长运营",
+      "domain": "互联网-用户增长",
+      "domain_slug": "growth",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "增长指标拆解与目标管理",
+        "拉新渠道投放与优化",
+        "留存与召回策略设计"
+      ],
+      "key_skills": [
+        "用户分层",
+        "A/B 实验",
+        "渠道投放"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "用户增长模型与指标",
+          "subtopics": [
+            "用户增长模型搭建",
+            "增长指标拆解方法",
+            "A/B 实验设计"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "用户运营与留存",
+          "subtopics": [
+            "用户分层运营策略",
+            "留存曲线分析",
+            "召回策略设计"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上用户增长或用户运营经验",
+        "能独立拆解增长指标并设计留存策略"
+      ],
+      "resume_projects": [
+        "某工具类 App 拉新项目：负责渠道投放与留存策略",
+        "会员召回项目：负责用户分层与召回触达"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "销售-大客户": {
+      "job_title": "大客户销售经理",
+      "domain": "销售-大客户",
+      "domain_slug": "sales-key-account",
+      "industry": "企业服务",
+      "core_responsibilities": [
+        "大客户开发与推进",
+        "方案呈现与商务谈判",
+        "客户经营与回款管理"
+      ],
+      "key_skills": [
+        "客户开发",
+        "商务谈判",
+        "客户经营"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "大客户开发与推进",
+          "subtopics": [
+            "客户决策链梳理",
+            "需求调研与方案呈现",
+            "商务谈判与报价策略"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        },
+        {
+          "key": "f2",
+          "name": "客户经营与复盘",
+          "subtopics": [
+            "客户关系维护节奏",
+            "商机漏斗与赢单复盘",
+            "回款与风险把控"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "临床诊断"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "临床诊断"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上大客户销售经验",
+        "能独立完成方案呈现与商务谈判"
+      ],
+      "resume_projects": [
+        "某制造业大客户项目：负责决策链梳理与方案呈现",
+        "年度续约项目：负责关系维护与回款"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "人力资源-招聘": {
+      "job_title": "招聘专员",
+      "domain": "人力资源-招聘",
+      "domain_slug": "hr-recruiting",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "职位需求澄清",
+        "渠道运营与人才寻源",
+        "面试评估与 Offer 沟通"
+      ],
+      "key_skills": [
+        "结构化面试",
+        "人才寻源",
+        "薪酬谈判"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "招聘全流程执行",
+          "subtopics": [
+            "职位需求澄清方法",
+            "渠道与人才寻源策略",
+            "面试安排与流程协调"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "人才评估与沟通",
+          "subtopics": [
+            "结构化面试提问设计",
+            "候选人动机判断",
+            "薪酬期望管理"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上端到端招聘经验",
+        "能独立完成需求澄清与候选人评估"
+      ],
+      "resume_projects": [
+        "技术团队扩招项目：负责需求澄清与寻源",
+        "校招项目：负责面试安排与 Offer 沟通"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "设计-交互与视觉": {
+      "job_title": "UI/UX 设计师",
+      "domain": "设计-交互与视觉",
+      "domain_slug": "design-uiux",
+      "industry": "互联网",
+      "core_responsibilities": [
+        "交互方案设计",
+        "视觉规范与设计系统",
+        "可用性验证与迭代"
+      ],
+      "key_skills": [
+        "交互设计",
+        "视觉设计",
+        "设计系统"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "交互设计与信息架构",
+          "subtopics": [
+            "任务流程与信息架构梳理",
+            "交互原型与可用性测试",
+            "无障碍与可用性规范"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "视觉设计与规范",
+          "subtopics": [
+            "视觉层级与栅格规范",
+            "设计系统与组件规范",
+            "品牌调性与视觉一致性"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "护理实务",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上 UI/UX 设计经验",
+        "能独立完成交互方案与视觉规范"
+      ],
+      "resume_projects": [
+        "B 端后台改版：负责信息架构与原型",
+        "设计系统建设：负责组件与视觉规范"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "客服-投诉处理": {
+      "job_title": "客户投诉处理专员",
+      "domain": "客服-投诉处理",
+      "domain_slug": "cs-complaint",
+      "industry": "服务业",
+      "core_responsibilities": [
+        "投诉受理与分级处理",
+        "跨部门协同与闭环",
+        "投诉根因分析与改进"
+      ],
+      "key_skills": [
+        "投诉处理",
+        "沟通安抚",
+        "根因分析"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "投诉受理与处理",
+          "subtopics": [
+            "投诉分级与响应时效",
+            "情绪安抚与沟通话术",
+            "跨部门协同处理流程"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "问题闭环与改进",
+          "subtopics": [
+            "根因分析与责任判定",
+            "补偿方案与授权边界",
+            "投诉数据复盘与改进"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "一年以上客服或投诉处理经验",
+        "能独立处理疑难投诉并推动闭环"
+      ],
+      "resume_projects": [
+        "售后投诉专项：负责分级处理与协同",
+        "投诉复盘项目：负责根因分析与改进"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "制造-生产管理": {
+      "job_title": "生产主管",
+      "domain": "制造-生产管理",
+      "domain_slug": "mfg-production",
+      "industry": "制造业",
+      "core_responsibilities": [
+        "生产排产与现场管理",
+        "过程质量管控",
+        "成本与损耗控制"
+      ],
+      "key_skills": [
+        "生产排产",
+        "现场管理",
+        "质量改善"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "生产计划与现场管理",
+          "subtopics": [
+            "生产排产与产能测算",
+            "现场 5S 与安全管理",
+            "设备点检与异常处理"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "质量与成本控制",
+          "subtopics": [
+            "过程质量管控方法",
+            "不良品分析与改善",
+            "生产成本与损耗控制"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "诉讼流程",
+        "临床诊断",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "诉讼流程",
+        "临床诊断",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上生产现场管理经验",
+        "能独立排产并推动质量改善"
+      ],
+      "resume_projects": [
+        "产线提效项目：负责排产与产能测算",
+        "不良率改善项目：负责根因分析与改善"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "物流-仓储调度": {
+      "job_title": "仓储调度专员",
+      "domain": "物流-仓储调度",
+      "domain_slug": "log-warehouse",
+      "industry": "物流",
+      "core_responsibilities": [
+        "仓储作业与库位管理",
+        "配送调度与运力协调",
+        "库存差异处理"
+      ],
+      "key_skills": [
+        "仓储管理",
+        "调度协调",
+        "库存管理"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "仓储作业与库存管理",
+          "subtopics": [
+            "入库上架与库位规划",
+            "盘点与库存差异处理",
+            "仓储作业效率优化"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "调度与配送协同",
+          "subtopics": [
+            "配送路线与车辆调度",
+            "运力应急与异常处理",
+            "仓储与运输协同流程"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "诉讼流程"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "诉讼流程"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "两年以上仓储或调度经验",
+        "能独立处理库存差异与运力异常"
+      ],
+      "resume_projects": [
+        "中心仓库位优化：负责上架与拣货路径",
+        "大促运力保障：负责车辆调度与应急"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "政府-政务服务": {
+      "job_title": "政务窗口服务专员",
+      "domain": "政府-政务服务",
+      "domain_slug": "gov-service",
+      "industry": "公共管理",
+      "core_responsibilities": [
+        "窗口事项受理与办理",
+        "政策解读与材料告知",
+        "群众诉求转办与跟踪"
+      ],
+      "key_skills": [
+        "政务服务",
+        "政策解读",
+        "群众沟通"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "窗口服务与政策解读",
+          "subtopics": [
+            "政务服务事项办理流程",
+            "政策解读与材料告知",
+            "窗口服务规范与礼仪"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "诉求处理与协同",
+          "subtopics": [
+            "群众诉求受理与转办",
+            "跨部门协同办理流程",
+            "办件跟踪与结果反馈"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "护理实务"
+      ],
+      "forbidden_topics": [
+        "编程开发",
+        "模型训练",
+        "临床诊断",
+        "护理实务"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "具备政务服务窗口或群众接待经验",
+        "熟悉事项办理流程与诉求转办"
+      ],
+      "resume_projects": [
+        "政务大厅综合窗口：负责事项受理与告知",
+        "诉求转办专项：负责跟踪与反馈"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    },
+    "金融-风险管理": {
+      "job_title": "信贷风控专员",
+      "domain": "金融-风险管理",
+      "domain_slug": "fin-risk",
+      "industry": "金融",
+      "core_responsibilities": [
+        "风控模型与评分卡建设",
+        "授信审批与额度管理",
+        "贷后预警与资产质量监控"
+      ],
+      "key_skills": [
+        "风控模型",
+        "评分卡",
+        "授信审批",
+        "数据分析"
+      ],
+      "assessment_focus": [
+        {
+          "key": "f1",
+          "name": "风控模型与评分卡",
+          "subtopics": [
+            "风控模型迭代与监控",
+            "评分卡开发与验证",
+            "模型区分度与稳定性评估"
+          ],
+          "why_relevant": "来自 JD 要求 [0]",
+          "source_jd_ref": "0"
+        },
+        {
+          "key": "f2",
+          "name": "授信审批与监控",
+          "subtopics": [
+            "授信审批流程设计",
+            "贷后预警与名单管理",
+            "风险定价与额度策略"
+          ],
+          "why_relevant": "来自 JD 要求 [1]",
+          "source_jd_ref": "1"
+        }
+      ],
+      "out_of_scope_topics": [
+        "护理实务",
+        "临床诊断",
+        "诉讼流程",
+        "教学课程设计"
+      ],
+      "forbidden_topics": [
+        "护理实务",
+        "临床诊断",
+        "诉讼流程",
+        "教学课程设计"
+      ],
+      "confidence": 0.9,
+      "jd_items": [
+        "三年以上信贷风控或数据分析经验",
+        "熟悉评分卡开发与贷后预警机制"
+      ],
+      "resume_projects": [
+        "消费贷评分卡项目：负责开发与验证",
+        "贷后预警项目：负责名单与额度策略"
+      ],
+      "reference_ids": [
+        "research:job:1",
+        "research:job:2",
+        "research:job:3",
+        "research:job:4",
+        "research:job:5"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "tech-backend-sd-1",
+      "role": "技术-后端开发",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在订单服务重构里，是怎么保证接口幂等的？",
+        "skills": [
+          "幂等设计"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "tech-backend-sd-2",
+      "role": "技术-后端开发",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "数据库索引与慢查询优化你会从哪几个方向入手？",
+        "skills": [
+          "MySQL"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "tech-backend-cd-a-1",
+      "role": "技术-后端开发",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "护理交接班记录一般包含哪些内容？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "tech-backend-cd-b-1",
+      "role": "技术-后端开发",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给科室做成本核算？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "tech-backend-mirror-tech-frontend",
+      "role": "技术-后端开发",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 5,
+        "content": "首屏加载性能优化你会用哪些手段？",
+        "skills": [
+          "性能优化"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "近邻岗位镜像题：来自 技术-前端开发 的同域题，在 技术-后端开发 下应判跨域",
+      "tags": [
+        "mirror",
+        "neighbor_pair",
+        "no_source"
+      ]
+    },
+    {
+      "id": "tech-frontend-mirror-tech-backend",
+      "role": "技术-前端开发",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 1,
+        "content": "数据库索引与慢查询优化你会怎么排查？",
+        "skills": [
+          "MySQL"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "近邻岗位镜像题：来自 技术-后端开发 的同域题，在 技术-前端开发 下应判跨域",
+      "tags": [
+        "mirror",
+        "neighbor_pair",
+        "no_source"
+      ]
+    },
+    {
+      "id": "tech-frontend-sd-1",
+      "role": "技术-前端开发",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "请讲讲你在首页性能治理里，首屏加载是怎么优化的？",
+        "skills": [
+          "性能优化"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "tech-frontend-sd-2",
+      "role": "技术-前端开发",
+      "category": "same_domain",
+      "question": {
+        "id": 3,
+        "content": "组件拆分与复用策略你是怎么把握粒度的？",
+        "skills": [
+          "组件化"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "tech-frontend-cd-a-1",
+      "role": "技术-前端开发",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 4,
+        "content": "患者护理记录该怎么规范书写？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "tech-frontend-cd-b-1",
+      "role": "技术-前端开发",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 5,
+        "content": "医疗器械的采购流程你了解吗？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "tech-data-sd-1",
+      "role": "技术-数据工程",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你负责的数仓分层是怎么设计的？",
+        "skills": [
+          "数仓建模"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "tech-data-sd-2",
+      "role": "技术-数据工程",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "离线数据管道设计你会考虑哪些关键点？",
+        "skills": [
+          "数据管道"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "tech-data-cd-a-1",
+      "role": "技术-数据工程",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "合同审查的重点条款一般有哪些？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "tech-data-cd-b-1",
+      "role": "技术-数据工程",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做用药核对？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "tech-ai-sd-1",
+      "role": "技术-AI应用",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你的知识库问答项目里，向量检索召回是怎么优化的？",
+        "skills": [
+          "向量检索"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "tech-ai-sd-2",
+      "role": "技术-AI应用",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "工具调用编排与兜底你会怎么设计？",
+        "skills": [
+          "Agent"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "tech-ai-cd-a-1",
+      "role": "技术-AI应用",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "你会怎么给患者做护理评估？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "tech-ai-cd-b-1",
+      "role": "技术-AI应用",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做入院评估？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "tech-algo-sd-1",
+      "role": "技术-算法研究",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在模型训练里，训练数据是怎么构造的？",
+        "skills": [
+          "模型训练"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "tech-algo-sd-2",
+      "role": "技术-算法研究",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "评估指标与离线评测你会怎么选？",
+        "skills": [
+          "评估指标"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "tech-algo-cd-a-1",
+      "role": "技术-算法研究",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "怎么做合同主体资格审查？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "tech-algo-cd-b-1",
+      "role": "技术-算法研究",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "科室成本核算你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "med-nursing-mirror-tech-algo",
+      "role": "医疗-临床护理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在模型训练里，训练数据是怎么构造的？",
+        "skills": [
+          "模型训练"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "strong_signal",
+      "expected_reason": "近邻岗位镜像题：来自 技术-算法研究 的同域题，在 医疗-临床护理 下应判跨域",
+      "tags": [
+        "mirror",
+        "neighbor_pair",
+        "no_source"
+      ]
+    },
+    {
+      "id": "med-nursing-sd-1",
+      "role": "医疗-临床护理",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "请讲讲你在病区里是怎么做给药核对的？",
+        "skills": [
+          "给药核对"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "med-nursing-sd-2",
+      "role": "医疗-临床护理",
+      "category": "same_domain",
+      "question": {
+        "id": 3,
+        "content": "病情恶化早期识别你会关注哪些信号？",
+        "skills": [
+          "病情观察"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "med-nursing-cd-a-1",
+      "role": "医疗-临床护理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 4,
+        "content": "接口幂等与重试设计你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "med-nursing-cd-b-1",
+      "role": "医疗-临床护理",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 5,
+        "content": "合同审查的重点条款有哪些？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "med-records-sd-1",
+      "role": "医疗-病案管理",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在病案首页质控里，重点审核哪些项？",
+        "skills": [
+          "病案质控"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "med-records-sd-2",
+      "role": "医疗-病案管理",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "ICD 编码规则应用你遇到过哪些易错点？",
+        "skills": [
+          "ICD 编码"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "med-records-cd-a-1",
+      "role": "医疗-病案管理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "缓存一致性与失效策略你是怎么设计的？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "med-records-cd-b-1",
+      "role": "医疗-病案管理",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做护理评估？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "law-litigation-sd-1",
+      "role": "法律-诉讼",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你处理过的一起买卖合同纠纷案，证据是怎么组织的？",
+        "skills": [
+          "证据规则"
+        ],
+        "question_type": "project",
+        "focus_key": "f2",
+        "jd_ref": "",
+        "project_ref": "1",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "law-litigation-sd-2",
+      "role": "法律-诉讼",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "合同主体资格审查一般会看哪些材料？",
+        "skills": [
+          "合同审查"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "law-litigation-cd-a-1",
+      "role": "法律-诉讼",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "你会用程序化的方式批量检索类案裁判文书吗？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "law-litigation-cd-b-1",
+      "role": "法律-诉讼",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "科室的成本核算你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "2",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "law-litigation-conf-1",
+      "role": "法律-诉讼",
+      "category": "confusable",
+      "question": {
+        "id": 5,
+        "content": "你平时怎么做法律检索？",
+        "skills": [
+          "法律检索"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "2",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "law-litigation-conf-2",
+      "role": "法律-诉讼",
+      "category": "confusable",
+      "question": {
+        "id": 6,
+        "content": "你用过哪些法律数据库？",
+        "skills": [
+          "法律检索"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "2",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "law-litigation-mirror-legal-compliance",
+      "role": "法律-诉讼",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 7,
+        "content": "合规风险识别流程你会怎么落地？",
+        "skills": [
+          "合规管理"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "近邻岗位镜像题：来自 法律-合规 的同域题，在 法律-诉讼 下应判跨域",
+      "tags": [
+        "mirror",
+        "neighbor_pair",
+        "no_source"
+      ]
+    },
+    {
+      "id": "legal-compliance-mirror-law-litigation",
+      "role": "法律-合规",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 1,
+        "content": "举证期限与证据交换你会怎么把握？",
+        "skills": [
+          "诉讼流程"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "近邻岗位镜像题：来自 法律-诉讼 的同域题，在 法律-合规 下应判跨域",
+      "tags": [
+        "mirror",
+        "neighbor_pair",
+        "no_source"
+      ]
+    },
+    {
+      "id": "legal-compliance-sd-1",
+      "role": "法律-合规",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "请讲讲你是怎么开展合规风险识别的？",
+        "skills": [
+          "合规管理"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "legal-compliance-sd-2",
+      "role": "法律-合规",
+      "category": "same_domain",
+      "question": {
+        "id": 3,
+        "content": "内部调查与取证流程你会怎么走？",
+        "skills": [
+          "内部调查"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "legal-compliance-cd-a-1",
+      "role": "法律-合规",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 4,
+        "content": "接口超时排查顺序你会怎么定？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "legal-compliance-cd-b-1",
+      "role": "法律-合规",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 5,
+        "content": "护理交接班记录一般包含哪些内容？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "edu-sd-1",
+      "role": "教育-学科教学",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你设计过的一节阅读课，教学目标是怎么定的？",
+        "skills": [
+          "课堂设计"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "edu-sd-2",
+      "role": "教育-学科教学",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "课堂提问设计你会注意哪些点？",
+        "skills": [
+          "课堂设计"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "edu-cd-a-1",
+      "role": "教育-学科教学",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "你会用程序化的方式给全班作文打分吗？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "edu-cd-b-1",
+      "role": "教育-学科教学",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给班级做一套财务预算？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "edu-conf-1",
+      "role": "教育-学科教学",
+      "category": "confusable",
+      "question": {
+        "id": 5,
+        "content": "课堂上你如何设计师生问答？",
+        "skills": [
+          "课堂设计"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "edu-conf-2",
+      "role": "教育-学科教学",
+      "category": "confusable",
+      "question": {
+        "id": 6,
+        "content": "你如何训练学生的阅读理解能力？",
+        "skills": [
+          "阅读理解教学"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "edu-research-sd-1",
+      "role": "教育-教研",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你组织过一次教研活动的流程？",
+        "skills": [
+          "教研组织"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "edu-research-sd-2",
+      "role": "教育-教研",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "课堂观察与诊断方法你会怎么设计？",
+        "skills": [
+          "课堂观察"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "edu-research-cd-a-1",
+      "role": "教育-教研",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "静脉输液与给药核对你会怎么执行？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "edu-research-cd-b-1",
+      "role": "教育-教研",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "接口幂等与重试设计你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "fin-audit-sd-1",
+      "role": "财务-审计",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在年报审计里，函证与盘点程序是怎么安排的？",
+        "skills": [
+          "审计程序"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "fin-audit-sd-2",
+      "role": "财务-审计",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "财务报表勾稽关系你会重点核对哪些？",
+        "skills": [
+          "财务报表"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "fin-audit-cd-a-1",
+      "role": "财务-审计",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "病情恶化早期识别你会关注哪些信号？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "fin-audit-cd-b-1",
+      "role": "财务-审计",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做用药核对？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "fin-tax-sd-1",
+      "role": "财务-税务",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在增值税申报里，进销项是怎么核对的？",
+        "skills": [
+          "税务申报"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "fin-tax-sd-2",
+      "role": "财务-税务",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "企业所得税汇算清缴你会重点调整哪些项？",
+        "skills": [
+          "汇算清缴"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "fin-tax-cd-a-1",
+      "role": "财务-税务",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "急救流程配合你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "fin-tax-cd-b-1",
+      "role": "财务-税务",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "工具调用编排与兜底你会怎么设计？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "ops-content-sd-1",
+      "role": "互联网-内容运营",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在小红书账号运营里，选题是怎么定的？",
+        "skills": [
+          "选题策划"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "ops-content-sd-2",
+      "role": "互联网-内容运营",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "内容数据复盘方法你会看哪些指标？",
+        "skills": [
+          "数据复盘"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "ops-content-cd-a-1",
+      "role": "互联网-内容运营",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "合同主体资格审查一般会看哪些材料？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "ops-content-cd-b-1",
+      "role": "互联网-内容运营",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做护理评估？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "ops-content-conf-1",
+      "role": "互联网-内容运营",
+      "category": "confusable",
+      "question": {
+        "id": 5,
+        "content": "你如何跟客户对话挖掘需求？",
+        "skills": [
+          "用户沟通"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "growth-sd-1",
+      "role": "互联网-用户增长",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你做过的拉新项目，增长指标是怎么拆的？",
+        "skills": [
+          "指标拆解"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "growth-sd-2",
+      "role": "互联网-用户增长",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "用户分层运营你会怎么划分人群？",
+        "skills": [
+          "用户分层"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "growth-cd-a-1",
+      "role": "互联网-用户增长",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "你会用程序化的方式把用户行为数据跑成日报吗？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "growth-cd-b-1",
+      "role": "互联网-用户增长",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给护理团队做排班和人力测算？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "growth-conf-1",
+      "role": "互联网-用户增长",
+      "category": "confusable",
+      "question": {
+        "id": 5,
+        "content": "你如何搭建用户增长模型？",
+        "skills": [
+          "增长模型"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "易混淆合法题：旧版 4 组词表会误删，新版白名单必须保留",
+      "tags": [
+        "confusable",
+        "old_guard_false_drop"
+      ]
+    },
+    {
+      "id": "sales-key-account-sd-1",
+      "role": "销售-大客户",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在制造业大客户项目里，决策链是怎么梳理的？",
+        "skills": [
+          "客户开发"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "sales-key-account-sd-2",
+      "role": "销售-大客户",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "商务谈判与报价策略你会怎么定？",
+        "skills": [
+          "商务谈判"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "sales-key-account-cd-a-1",
+      "role": "销售-大客户",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "无菌操作规范你会怎么执行？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "sales-key-account-cd-b-1",
+      "role": "销售-大客户",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么设计一次消融实验？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "hr-recruiting-sd-1",
+      "role": "人力资源-招聘",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲技术团队扩招里，职位需求澄清你是怎么做的？",
+        "skills": [
+          "需求澄清"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "hr-recruiting-sd-2",
+      "role": "人力资源-招聘",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "结构化面试提问设计你会怎么构思？",
+        "skills": [
+          "结构化面试"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "hr-recruiting-cd-a-1",
+      "role": "人力资源-招聘",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "医嘱执行与给药核对你会怎么把关？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "hr-recruiting-cd-b-1",
+      "role": "人力资源-招聘",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么设计一个推荐算法的离线评测？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "design-uiux-sd-1",
+      "role": "设计-交互与视觉",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲 B 端后台改版里，信息架构你是怎么梳理的？",
+        "skills": [
+          "信息架构"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "design-uiux-sd-2",
+      "role": "设计-交互与视觉",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "设计系统与组件规范你会怎么落地？",
+        "skills": [
+          "设计系统"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "design-uiux-cd-a-1",
+      "role": "设计-交互与视觉",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "静脉输液与给药核对你会怎么执行？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "design-uiux-cd-b-1",
+      "role": "设计-交互与视觉",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "企业所得税汇算清缴你会重点调整哪些项？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "cs-complaint-sd-1",
+      "role": "客服-投诉处理",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲售后投诉专项里，投诉分级与响应时效是怎么定的？",
+        "skills": [
+          "投诉处理"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "cs-complaint-sd-2",
+      "role": "客服-投诉处理",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "根因分析与责任判定你会怎么做？",
+        "skills": [
+          "根因分析"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "1",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "cs-complaint-cd-a-1",
+      "role": "客服-投诉处理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "数据库索引与慢查询优化你会从哪几个方向入手？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "cs-complaint-cd-b-1",
+      "role": "客服-投诉处理",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你如何训练学生的阅读理解能力？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "mfg-production-sd-1",
+      "role": "制造-生产管理",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲产线提效项目里，生产排产你是怎么安排的？",
+        "skills": [
+          "生产排产"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "mfg-production-sd-2",
+      "role": "制造-生产管理",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "过程质量管控方法你用过哪些？",
+        "skills": [
+          "质量管控"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "mfg-production-cd-a-1",
+      "role": "制造-生产管理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "举证期限与证据交换你会怎么把握？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "mfg-production-cd-b-1",
+      "role": "制造-生产管理",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你如何搭建用户增长模型？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "log-warehouse-sd-1",
+      "role": "物流-仓储调度",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲中心仓库位优化里，库位规划你是怎么做的？",
+        "skills": [
+          "库位规划"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "log-warehouse-sd-2",
+      "role": "物流-仓储调度",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "盘点与库存差异处理你会怎么推进？",
+        "skills": [
+          "库存管理"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "log-warehouse-cd-a-1",
+      "role": "物流-仓储调度",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "口服给药的注意事项有哪些？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "log-warehouse-cd-b-1",
+      "role": "物流-仓储调度",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "依法解除劳动合同需要满足哪些条件？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "gov-service-sd-1",
+      "role": "政府-政务服务",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲政务大厅综合窗口里，事项办理流程你是怎么把控的？",
+        "skills": [
+          "政务服务"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "gov-service-sd-2",
+      "role": "政府-政务服务",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "政策解读与材料告知你会怎么做？",
+        "skills": [
+          "政策解读"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "gov-service-cd-a-1",
+      "role": "政府-政务服务",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "模型训练数据构造你会怎么做？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "strong_signal",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "gov-service-cd-b-1",
+      "role": "政府-政务服务",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "你会怎么给患者做护理评估？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    },
+    {
+      "id": "fin-risk-sd-1",
+      "role": "金融-风险管理",
+      "category": "same_domain",
+      "question": {
+        "id": 1,
+        "content": "请讲讲你在消费贷评分卡项目里，模型迭代是怎么做的？",
+        "skills": [
+          "风控模型"
+        ],
+        "question_type": "project",
+        "focus_key": "f1",
+        "jd_ref": "",
+        "project_ref": "0",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "binding",
+      "expected_reason": "同域·经历类：声明 focus_key 且引用简历项目/JD 来源",
+      "tags": [
+        "same_domain",
+        "project_axis",
+        "binding"
+      ]
+    },
+    {
+      "id": "fin-risk-sd-2",
+      "role": "金融-风险管理",
+      "category": "same_domain",
+      "question": {
+        "id": 2,
+        "content": "模型区分度与稳定性评估你会看哪些指标？",
+        "skills": [
+          "模型评估"
+        ],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "whitelist_hit",
+      "expected_reason": "同域·知识/情景类：题面命中白名单 subtopics",
+      "tags": [
+        "same_domain",
+        "knowledge_axis",
+        "whitelist"
+      ]
+    },
+    {
+      "id": "fin-risk-cd-a-1",
+      "role": "金融-风险管理",
+      "category": "cross_domain_a",
+      "question": {
+        "id": 3,
+        "content": "静脉输液与给药核对你会怎么执行？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "drop",
+      "expected_stage": "arbiter",
+      "expected_reason": "跨域·无来源：D1（无归属无来源）+ D3（仲裁确认）→ 两票丢弃",
+      "tags": [
+        "cross_domain",
+        "no_source",
+        "natural_wording"
+      ]
+    },
+    {
+      "id": "fin-risk-cd-b-1",
+      "role": "金融-风险管理",
+      "category": "cross_domain_b",
+      "question": {
+        "id": 4,
+        "content": "课堂上你如何设计师生问答？",
+        "skills": [],
+        "question_type": "scenario",
+        "focus_key": "",
+        "jd_ref": "0",
+        "project_ref": "",
+        "research_ref": ""
+      },
+      "expected": "keep",
+      "expected_stage": "unverified",
+      "expected_reason": "跨域·有来源：D1 不成立（来源合法）→ 仅 D3 一票 → 按设计保留（偏置量化样本）",
+      "tags": [
+        "cross_domain",
+        "with_source",
+        "bias_sample"
+      ]
+    }
+  ]
+}
