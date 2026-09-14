@@ -30,7 +30,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   resume_parse_failed: "简历识别失败，请检查文件或尝试 TXT 格式。",
   jd_image_parse_failed: "岗位图片识别失败，请换清晰图片或直接粘贴文字。",
   no_readable_text: "没有识别到可读文字，请换清晰图片或直接粘贴文字。",
-  ocr_language_missing: "OCR 缺少所需中文或英文语言包，请管理员安装 chi_sim、eng 后重试；不会自动退回英文识别。",
+  ocr_language_missing: "图片识别依赖尚未准备，请按运行指南完成 OCR 初始化后重试；也可以直接粘贴文字。",
   ocr_tesseract_missing: "未找到 Tesseract，请管理员安装 OCR 引擎或检查 TESSERACT_CMD。",
   ocr_tessdata_missing: "OCR 语言目录不存在，请管理员检查 OCR_TESSDATA_DIR。",
   ocr_invalid_languages: "OCR 语言配置无效，请管理员检查 OCR_LANGUAGES。",

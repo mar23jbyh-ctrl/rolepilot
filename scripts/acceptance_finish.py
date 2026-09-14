@@ -27,6 +27,9 @@ ROOT_FILES = (
     "scripts/delivery_preflight.py", "scripts/delivery_smoke.py", "scripts/guard_benchmark.py",
     "scripts/install_ocr_languages.py", "scripts/ocr_benchmark.py", "scripts/release_run.py",
     "scripts/release_score_replay.py", "scripts/release_server.py",
+    "scripts/ocr_smoke.py", "Dockerfile", "compose.yaml", ".dockerignore",
+    "assets/ocr/LICENSE", "assets/ocr/models.json",
+    "assets/ocr/tessdata/chi_sim.traineddata", "assets/ocr/tessdata/eng.traineddata",
 )
 
 

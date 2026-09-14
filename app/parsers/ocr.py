@@ -22,6 +22,7 @@ MAX_RENDER_PIXELS = 20_000_000
 MAX_PDF_PAGES = 30
 _PDFIUM_LOCK = threading.RLock()  # PDFium's C API is not thread-safe.
 _HAN = r"\u3400-\u9fff"
+BUNDLED_TESSDATA = PROJECT_ROOT / "assets" / "ocr" / "tessdata"
 
 
 class OcrError(RuntimeError):
@@ -40,11 +41,11 @@ class OcrError(RuntimeError):
 
 
 def tessdata_dir() -> Path | None:
-    if settings.ocr_tessdata_dir:
-        path = Path(settings.ocr_tessdata_dir).expanduser()
-        return path if path.is_absolute() else PROJECT_ROOT / path
-    local = PROJECT_ROOT / "data/ocr/tessdata"
-    return local if local.is_dir() else None
+    path = settings.ocr_model_path
+    # An explicit missing directory is an error, rather than a system fallback.
+    if settings.ocr_tessdata_dir or path.is_dir():
+        return path
+    return BUNDLED_TESSDATA if BUNDLED_TESSDATA.is_dir() else None
 
 
 def engine_config() -> str:

@@ -35,3 +35,23 @@ jobs:
         run: npm test --prefix frontend
       - name: TypeScript and Vite build
         run: npm run build --prefix frontend
+  container-ocr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Build and start the user distribution
+        run: docker compose up --build --wait --wait-timeout 120
+      - name: Real Chinese and English OCR through HTTP
+        run: docker compose exec -T rolepilot python scripts/ocr_smoke.py
+      - name: Restart with the existing data volume
+        run: |
+          docker compose down
+          docker compose up --wait --wait-timeout 120
+          docker compose exec -T rolepilot python scripts/ocr_smoke.py
+      - name: Container logs
+        if: always()
+        run: docker compose logs --no-color
+      - name: Stop containers
+        if: always()
+        run: docker compose down

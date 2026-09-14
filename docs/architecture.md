@@ -99,6 +99,14 @@ flowchart TD
 
 整场预算在 SQLite 中原子预留。重试、并行工具、历史摘要和最终报告都记录在同一台账；未知 usage 保留占额，进程重启不会把未知调用当成零。普通流程为最终报告保留额度，预算不足时保留已提交回答并安全收尾。
 
+## 文档输入与可复现运行
+
+TXT、DOCX 和文字 PDF 在本机抽取文字；图片与扫描页使用 Tesseract，扫描 PDF 默认由 PDFium 渲染。原件不会发送到模型服务，抽取或 OCR 文字先返回可编辑界面，由用户确认后进入 Agent 流程。
+
+仓库随附固定版本的官方 `chi_sim`、`eng` 模型。未显式设置 `OCR_TESSDATA_DIR` 时，运行时优先读取 `DATA_DIR/ocr/tessdata`，其次读取仓库 `assets/ocr/tessdata`，最后使用系统语言目录；显式目录缺失会报错。安装脚本使用相同配置计算目标位置，不修改系统语言目录。
+
+Docker 多阶段构建先生成前端，再将前端产物、后端、Tesseract、PDFium 和中英文模型打包到同一运行镜像。OCR 模型安装在 `/opt/rolepilot-ocr/tessdata`，与 `/app/data` 会话卷分离；重启或挂载空会话卷不会遮蔽模型。镜像构建时检查 OCR 依赖，CI 进一步通过真实 HTTP 验证图片和扫描 PDF。
+
 ## 相关源码入口
 
 - 图编排：[app/graph/builder.py](../app/graph/builder.py)、[app/graph/edges.py](../app/graph/edges.py)
@@ -108,3 +116,4 @@ flowchart TD
 - 调用和预算：[app/llm/client.py](../app/llm/client.py)、[app/context/budget.py](../app/context/budget.py)、[app/telemetry/ledger.py](../app/telemetry/ledger.py)
 - 工具：[app/tools/schemas.py](../app/tools/schemas.py)、[app/tools/executor.py](../app/tools/executor.py)
 - 浏览器身份：[app/security.py](../app/security.py)、[api/routers/auth.py](../api/routers/auth.py)、[frontend/src/api/client.ts](../frontend/src/api/client.ts)、[frontend/src/api/browserSession.ts](../frontend/src/api/browserSession.ts)
+- 文档输入与运行：[app/parsers/ocr.py](../app/parsers/ocr.py)、[scripts/install_ocr_languages.py](../scripts/install_ocr_languages.py)、[Dockerfile](../Dockerfile)、[compose.yaml](../compose.yaml)

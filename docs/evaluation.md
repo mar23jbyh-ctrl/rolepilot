@@ -16,7 +16,7 @@ npm run build --prefix frontend
 
 | 验证层 | 结果 | 覆盖范围 |
 |---|---:|---|
-| 公开源 Python 回归 | **669 passed、7 skipped**，0 failed/error，1 条外部弃用警告 | 状态图、评分协议、SQLite 账本、上传边界、匿名身份升级与复用、隐私边界和错误路径 |
+| 公开源 Python 回归 | **680 passed、7 skipped**，0 failed/error，1 条外部弃用警告 | 状态图、评分协议、SQLite 账本、上传边界、匿名身份、OCR 安装路径与公共模型校验、隐私及错误路径 |
 | 前端协议与组件测试 | **66 passed** | 请求字段、会话状态、重复提交、环境隔离、失效凭据恢复和主要界面组件 |
 | TypeScript/Vite 构建 | **成功** | 类型检查和生产构建 |
 
@@ -25,6 +25,8 @@ npm run build --prefix frontend
 公开源不附带运行期会话库，因此 7 项可选历史库回放按设计跳过；核心协议测试使用临时 SQLite 和合成数据，不依赖这些历史记录。唯一警告来自 Starlette/AnyIO 的弃用别名。测试数量不是代码覆盖率或模型准确率。
 
 首次安装需在测试之外准备 `o200k_base` 分词器缓存，之后回归会阻止外部网络请求，具体命令见 [运行指南](run.md)。[GitHub Actions](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml) 在 Windows runner 上执行同一套后端回归、前端测试和构建，使用 Python 3.11 与 Node.js 22；最新状态和执行日志可在该页面查看。
+
+另一个 Linux CI 任务实际构建并启动 Docker 交付，通过 `ocr_smoke.py` 上传真实合成中英文图片与扫描 PDF，再保留原数据卷重启并重复检查。这一任务调用真实 Tesseract/PDFium，不替换 OCR 为桩，也不访问云端模型。执行结果以同一 Actions 页面的 `container-ocr` 日志为准。
 
 ## 会话可靠性
 
@@ -65,6 +67,28 @@ npm run build --prefix frontend
 - 评分协议测试覆盖字段类型、量规键、档位范围、回答原话证据、追问合并和程序聚合。固定协议回放覆盖 16 个案例、48 项检查，结果为 48/48；案例没有专家金标准，因此不能推出与专家或招聘结果的一致性。
 - OCR 测试覆盖语言包缺失、超时、失败、文件类型、页数和大小边界；独立 benchmark 使用固定开发样本，只能说明该样本上的行为，不能代表所有中文简历、复杂表格和扫描质量。
 - 评分和 OCR 的实现入口分别见 [`docs/scoring_contract.md`](scoring_contract.md)、[`tests/test_scoring_contract.py`](../tests/test_scoring_contract.py)、[`tests/test_release_d12_assessment.py`](../tests/test_release_d12_assessment.py)、[`tests/test_ocr.py`](../tests/test_ocr.py) 和 [`scripts/ocr_benchmark.py`](../scripts/ocr_benchmark.py)。
+
+### 公共模型与真实上传检查
+
+[`assets/ocr/models.json`](../assets/ocr/models.json) 固定了官方 `tessdata_best` 来源提交、文件大小与 SHA256；[`tests/test_ocr_installation.py`](../tests/test_ocr_installation.py) 检查随源码提供的两份模型、安装与运行时路径一致性、无下载复用、校验失败拒绝及现有模型保护。
+
+2026-09-14 在 Windows 的隔离临时数据环境中，使用真实 Tesseract、随源码提供的模型与 PDFium，通过本机 Uvicorn/HTTP 检查：
+
+| 输入 | HTTP 结果 | 检查 |
+|---|---:|---|
+| 合成中英文 JD PNG | 200 | OCR 方法，包含“岗位”、`Python`、`SQL` |
+| 合成中英文简历 PNG | 200 | OCR 方法，包含相同关键词 |
+| 合成扫描简历 PDF | 200 | PDFium 渲染后 OCR，包含相同关键词 |
+
+三个请求完成后上传原件均已清理，模型与搜索调用为 0。使用空临时 `DATA_DIR` 且不设置 OCR 目录，验证的是下载源码后自动选择公共模型的路径，不依赖开发目录中的历史语言包。
+
+可在已启动的 Docker 服务中复现：
+
+```shell
+docker compose exec -T rolepilot python scripts/ocr_smoke.py
+```
+
+手动模式使用 `.venv` 的 Python 执行相同脚本。该检查使用清晰、单栏、固定文字样本，证明依赖准备与上传链路能工作，不构成复杂版式、低清扫描或所有用户文档的准确率指标。
 
 ## 题目守卫
 

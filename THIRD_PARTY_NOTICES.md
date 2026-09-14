@@ -8,9 +8,14 @@ it does not relicense third-party software or job postings.
   `frontend/package-lock.json`. Keep each package's original license and notices
   when distributing the project. `.venv`, `node_modules` and build output are
   not source deliverables in this repository.
-- Tesseract and its official language data are external runtime dependencies.
-  The installer records the official source and checksum; language binaries are
-  Git-ignored and are not claimed as RolePilot-authored assets.
+- Tesseract is an external OCR engine. Official `tessdata_best` Chinese and
+  English models are bundled under `assets/ocr/tessdata` for reproducible use,
+  with the original [Apache 2.0 license](assets/ocr/LICENSE) and a pinned
+  [source/checksum manifest](assets/ocr/models.json). They are not
+  RolePilot-authored assets. The Docker image installs Tesseract and a Chinese
+  font from Debian packages; their original notices remain in
+  `/usr/share/doc/`. Locally installed extra language data under `data/ocr/`
+  remains Git-ignored.
 - Job requirements used in committed fixtures are limited necessary paraphrases,
   not copies of entire postings. The committed OCR and interview fixtures are
   synthetic and do not redistribute a job post or a candidate record. Any

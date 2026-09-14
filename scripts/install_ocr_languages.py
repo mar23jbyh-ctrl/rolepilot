@@ -1,7 +1,8 @@
-"""Install pinned official chi_sim locally; preserve the existing English model.
+"""Provision pinned official chi_sim locally; preserve the existing English model.
 
 No admin rights, pip packages, .env edits or replacement of system tessdata.
 Run with the project venv after installing the Tesseract executable.
+Bundled official models are reused before attempting any download.
 """
 from __future__ import annotations
 
@@ -21,6 +22,7 @@ sys.path.insert(0, str(ROOT))
 COMMIT = "e12c65a915945e4c28e237a9b52bc4a8f39a0cec"
 URL = f"https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/{COMMIT}/chi_sim.traineddata"
 EXPECTED_SHA256 = "4fef2d1306c8e87616d4d3e4c6c67faf5d44be3342290cf8f2f0f6e3aa7e735b"
+BUNDLED_TESSDATA = ROOT / "assets" / "ocr" / "tessdata"
 
 
 def digest(path):
@@ -41,7 +43,7 @@ def install(destination: Path, command: str, source: Path | None = None) -> dict
     destination = destination.resolve()
     if destination == source.resolve():
         raise RuntimeError("Use a separate project language directory, not system tessdata")
-    if not (source / "eng.traineddata").is_file() and not (destination / "eng.traineddata").is_file():
+    if not any((folder / "eng.traineddata").is_file() for folder in (source, destination, BUNDLED_TESSDATA)):
         raise RuntimeError("Existing eng.traineddata missing; install the English model first")
     destination.mkdir(parents=True, exist_ok=True)
     model = destination / "chi_sim.traineddata"
@@ -50,13 +52,19 @@ def install(destination: Path, command: str, source: Path | None = None) -> dict
     if not model.exists():
         with tempfile.TemporaryDirectory(prefix="interview-ocr-language-") as temp:
             downloaded = Path(temp) / "chi_sim.traineddata"
-            with urllib.request.urlopen(URL, timeout=60) as response, downloaded.open("xb") as target:
-                total = 0
-                while chunk := response.read(65536):
-                    total += len(chunk)
-                    if total > 32 * 1024 * 1024:
-                        raise RuntimeError("Official model download exceeds size limit")
-                    target.write(chunk)
+            cached = next((folder / "chi_sim.traineddata" for folder in (source, BUNDLED_TESSDATA)
+                           if (folder / "chi_sim.traineddata").is_file()
+                           and digest(folder / "chi_sim.traineddata") == EXPECTED_SHA256), source / "chi_sim.traineddata")
+            if cached.is_file() and digest(cached) == EXPECTED_SHA256:
+                shutil.copyfile(cached, downloaded)
+            else:
+                with urllib.request.urlopen(URL, timeout=60) as response, downloaded.open("xb") as target:
+                    total = 0
+                    while chunk := response.read(65536):
+                        total += len(chunk)
+                        if total > 32 * 1024 * 1024:
+                            raise RuntimeError("Official model download exceeds size limit")
+                        target.write(chunk)
             if digest(downloaded) != EXPECTED_SHA256:
                 raise RuntimeError("Official model SHA256 mismatch; nothing installed")
             # Exclusive creation also avoids replacing a concurrent install.
@@ -64,6 +72,8 @@ def install(destination: Path, command: str, source: Path | None = None) -> dict
                 shutil.copyfileobj(src, target)
     for lang in ("eng", "osd"):
         original, local = source / f"{lang}.traineddata", destination / f"{lang}.traineddata"
+        if not original.is_file():
+            original = BUNDLED_TESSDATA / f"{lang}.traineddata"
         if original.is_file() and not local.exists():
             with original.open("rb") as src, local.open("xb") as target:
                 shutil.copyfileobj(src, target)
@@ -83,7 +93,8 @@ def install(destination: Path, command: str, source: Path | None = None) -> dict
 def main():
     from app.config import settings
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dest", type=Path, default=ROOT / "data/ocr/tessdata")
+    parser.add_argument("--dest", type=Path, default=settings.ocr_model_path,
+                        help="Defaults to OCR_TESSDATA_DIR, or DATA_DIR/ocr/tessdata")
     parser.add_argument("--source-tessdata", type=Path)
     args = parser.parse_args()
     print(json.dumps(install(args.dest, settings.tesseract_cmd, args.source_tessdata), indent=2))

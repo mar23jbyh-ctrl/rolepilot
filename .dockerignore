@@ -1,0 +1,24 @@
+# Only runtime sources and frontend inputs enter the build context.
+**
+!Dockerfile
+!.dockerignore
+!requirements.lock.txt
+!LICENSE
+!THIRD_PARTY_NOTICES.md
+!app/
+!app/**
+!api/
+!api/**
+!assets/
+!assets/ocr/
+!assets/ocr/**
+!scripts/
+!scripts/install_ocr_languages.py
+!scripts/ocr_smoke.py
+!frontend/
+!frontend/**
+**/__pycache__/
+**/*.pyc
+frontend/node_modules/
+frontend/dist/
+frontend/tests/

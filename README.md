@@ -7,6 +7,7 @@
 [![LangGraph](https://img.shields.io/badge/LangGraph-1.1.2-1C3C3C?logo=langgraph&logoColor=white)](docs/architecture.md)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](api/main.py)
 [![React + TypeScript](https://img.shields.io/badge/React%20%2B%20TypeScript-3178C6?logo=react&logoColor=white)](frontend/package.json)
+[![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](compose.yaml)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 **基于 LangGraph 的岗位定制面试练习系统**：解析简历与 JD，结合 Tavily Web 检索生成岗位题单，通过有限追问与证据化评分，提供可恢复的多轮练习和岗位维度参考报告。
@@ -93,12 +94,39 @@ flowchart LR
 
 ### 环境要求
 
-- Python 3.11；Node.js 22 或更高版本（CI 使用 Node.js 22）。
 - 一个兼容 Chat Completions、支持工具调用且能遵循 JSON 输出要求的大模型服务。服务地址可配置，不限定具体厂商；结构化结果由提示词、JSON 解析和程序校验实现。
 - Tavily API Key，用于岗位 Web 调研。搜索失败会被标记为降级，不会伪装成已联网。
-- 使用图片或扫描 PDF 时，需要本机安装 Tesseract，并准备 `chi_sim`、`eng` 语言数据。
+- 推荐安装 Docker（含 Compose），无需在本机另装 Python、Node.js 或 Tesseract。手动开发模式需要 Python 3.11、Node.js 22 和 Tesseract。
+- 仓库随附固定官方版本的 `chi_sim`、`eng` OCR 模型及许可证；Docker 镜像同时安装 OCR 引擎与扫描 PDF 渲染依赖。
 
-### Windows PowerShell
+### 推荐：Docker 一条命令启动
+
+下载仓库并解压，或使用 Git：
+
+```shell
+git clone https://github.com/mar23jbyh-ctrl/rolepilot.git
+cd rolepilot
+```
+
+将 `.env.example` 复制为 `.env`，填写 `MODEL`、`BASE_URL`、`API_KEY`、`TAVILY_API_KEY`。Windows PowerShell 可执行：
+
+```powershell
+if (-not (Test-Path -LiteralPath .env)) {
+  Copy-Item -LiteralPath .env.example -Destination .env
+}
+```
+
+保存配置后启动：
+
+```shell
+docker compose up --build -d --wait
+```
+
+打开 <http://127.0.0.1:8000>，即可上传简历、识别 JD 图片并开始练习。首次构建需要联网下载基础镜像和软件依赖；OCR 中英文模型已随源码提供，不需要另找语言包。密钥未配置时仍可验证健康检查和上传，完整面试需要有效模型配置。
+
+会话保存在 Docker 数据卷，`docker compose down` 停止服务并保留数据。更新源码或 `.env` 后再次执行启动命令。日志、OCR 实测命令、手动启动和配置范围见 [运行指南](docs/run.md)。Docker 默认仅开放本机 8000 端口。
+
+### 开发模式：Windows PowerShell
 
 在仓库根目录执行：
 
@@ -150,15 +178,15 @@ npm run build --prefix frontend
 
 Linux/macOS 将 Python 路径替换为 `.venv/bin/python`，其余命令相同。安装示例以 Windows 开发环境为主要验证环境，其他平台可按相同依赖和配置运行。
 
-### OCR（可选）
+### 手动模式的 OCR
 
-只使用 TXT、DOCX 或文字 PDF 时可以不安装 OCR。需要图片或扫描 PDF 时：
+只使用 TXT、DOCX 或文字 PDF 时不需要 Tesseract。图片与扫描 PDF 需要先安装 [Tesseract 引擎](https://tesseract-ocr.github.io/tessdoc/Installation.html)；默认自动读取仓库内的中英文模型，无需单独下载语言包。确认依赖：
 
 ```powershell
-.\.venv\Scripts\python.exe -X utf8 scripts/install_ocr_languages.py
+.\.venv\Scripts\python.exe -X utf8 -c "from app.parsers.ocr import dependency_status; print(dependency_status())"
 ```
 
-确认 Tesseract 可执行并包含中文、英文语言包后再上传文件。OCR 结果会先进入可编辑文本框，用户确认后才用于创建面试；建议检查识别结果。
+`ready: True` 表示图片 OCR 依赖就绪；`pdf.ready: True` 表示扫描 PDF 渲染依赖就绪。自定义目录、非 PATH 安装和依赖修复见 [运行指南](docs/run.md#手动模式的-ocr)。OCR 结果会先进入可编辑文本框，确认后才用于创建面试。
 
 ## 使用流程
 
@@ -209,9 +237,10 @@ npm run build --prefix frontend
 
 | 检查 | 结果 |
 |---|---|
-| 后端 Pytest | **669 passed，7 skipped**（可选历史库回放） |
+| 后端 Pytest | **680 passed，7 skipped**（可选历史库回放） |
 | 前端测试 | **66 passed** |
 | TypeScript / Vite | **类型检查与构建通过** |
+| 真实 OCR HTTP 检查 | **JD 图片、简历图片、扫描 PDF 均返回 200**，中英文关键词可识别 |
 
 测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与浏览器验收的范围见 [评测与证据](docs/evaluation.md)。最新远程结果可在 [GitHub Actions](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml) 查看。
 
@@ -221,7 +250,7 @@ npm run build --prefix frontend
 .\.venv\Scripts\python.exe -X utf8 scripts/delivery_smoke.py --execute --output docs/release/evidence/my-smoke
 ```
 
-输出目录需尚不存在。该命令启动隔离的 Uvicorn 服务，以合成材料和 SDK/搜索桩验证真实状态图、SQLite、请求重放、服务重启和删除。其他工具的用途见 [scripts/README.md](scripts/README.md)。GitHub Actions 配置会在提交和 PR 中运行离线回归与前端构建。
+输出目录需尚不存在。该命令启动隔离的 Uvicorn 服务，以合成材料和 SDK/搜索桩验证真实状态图、SQLite、请求重放、服务重启和删除。其他工具的用途见 [scripts/README.md](scripts/README.md)。GitHub Actions 在提交和 PR 中运行 Windows 回归，以及 Linux Docker 构建、真实中英文 OCR 上传和保留数据卷的重启检查。
 
 ## 项目结构
 
@@ -237,9 +266,11 @@ app/
   session/                   业务 SQLite、回答幂等和操作处理权
   telemetry/                 用量台账、预算、价格快照和汇总
 frontend/                    React + TypeScript + Vite 界面
+assets/ocr/                  随源码提供的官方中英文 OCR 模型、校验清单与许可证
 tests/                       离线回归与合成测试夹具
 scripts/                     OCR 安装和开发验证工具
 docs/                        架构、评测、安全、运行和评分契约
+Dockerfile / compose.yaml    包含 OCR 的单地址启动方式
 ```
 
 ## 边界与验证范围

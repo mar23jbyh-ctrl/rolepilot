@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
     tesseract_cmd: str = "tesseract"
     ocr_languages: str = "chi_sim+eng"
-    ocr_tessdata_dir: str = ""  # Auto-select data/ocr/tessdata when installed.
+    ocr_tessdata_dir: str = ""  # Auto-select DATA_DIR/ocr/tessdata when installed.
     ocr_timeout_seconds: float = Field(default=30, gt=0, le=120)
     ocr_pdf_dpi: int = Field(default=300, ge=72, le=600)
     ocr_psm: int = Field(default=6, ge=1, le=13)  # Single-column resume/JD blocks.
@@ -114,6 +114,14 @@ class Settings(BaseSettings):
     @property
     def data_root(self) -> Path:
         return PROJECT_ROOT / self.data_dir
+
+    @property
+    def ocr_model_path(self) -> Path:
+        """The installer and runtime share one configured language directory."""
+        if self.ocr_tessdata_dir:
+            path = Path(self.ocr_tessdata_dir).expanduser()
+            return path if path.is_absolute() else PROJECT_ROOT / path
+        return self.data_root / "ocr" / "tessdata"
 
     @property
     def grade_cutoffs(self) -> tuple[float, float, float]:

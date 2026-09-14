@@ -1,0 +1,27 @@
+services:
+  rolepilot:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      MODEL: "${MODEL:-deepseek-chat}"
+      BASE_URL: "${BASE_URL:-https://api.deepseek.com}"
+      API_KEY: "${API_KEY:-}"
+      TAVILY_API_KEY: "${TAVILY_API_KEY:-}"
+      CONTEXT_BUDGET: "${CONTEXT_BUDGET:-16000}"
+      MAX_OUTPUT_TOKENS: "${MAX_OUTPUT_TOKENS:-2048}"
+      SESSION_TOKEN_BUDGET: "${SESSION_TOKEN_BUDGET:-500000}"
+      FINAL_REPORT_TOKEN_RESERVE: "${FINAL_REPORT_TOKEN_RESERVE:-50000}"
+      LLM_OUTPUT_LIMIT_PARAM: "${LLM_OUTPUT_LIMIT_PARAM:-max_tokens}"
+      LLM_SEND_TEMPERATURE: "${LLM_SEND_TEMPERATURE:-true}"
+      TARGET_QUESTIONS: "${TARGET_QUESTIONS:-15}"
+      MIN_QUESTIONS: "${MIN_QUESTIONS:-12}"
+      MAX_QUESTIONS: "${MAX_QUESTIONS:-18}"
+      MAX_FOLLOW_UPS: "${MAX_FOLLOW_UPS:-3}"
+      MAX_TOTAL_FOLLOW_UPS: "${MAX_TOTAL_FOLLOW_UPS:-12}"
+    volumes:
+      - rolepilot-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  rolepilot-data:

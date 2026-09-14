@@ -44,12 +44,13 @@ const copy = (value) => JSON.parse(JSON.stringify(value));
 const flush = async () => { for (let i = 0; i < 50; i++) await Promise.resolve(); };
 const pendingKey = "interview_pending_answer_v1";
 const credentialKey = "interview_anonymous_bearer_v1";
-test("real ApiError explains missing OCR languages without claiming English fallback", () => {
+test("real ApiError provides an actionable OCR setup and text alternative", () => {
   const { ApiError: ActualError } = load("api/client.ts", {}, {});
   const error = new ActualError(503, { code: "ocr_language_missing", missing_languages: ["chi_sim"] });
   assert.equal(error.code, "ocr_language_missing");
-  assert.match(error.message, /缺少.*语言包/);
-  assert.match(error.message, /不会自动退回英文/);
+  assert.match(error.message, /运行指南.*OCR 初始化/);
+  assert.match(error.message, /粘贴文字/);
+  assert.doesNotMatch(error.message, /管理员|自动退回英文/);
 });
 test("real ApiError distinguishes scanned PDF dependency failure", () => {
   const { ApiError: ActualError } = load("api/client.ts", {}, {});
