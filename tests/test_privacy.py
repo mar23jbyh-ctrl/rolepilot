@@ -170,6 +170,20 @@ def test_parallel_duplicate_deletes_do_not_resurrect_state(private_runtime):
     assert not any(counts(services[0], sid).values())
 
 
+def test_delete_lock_is_shared_by_service_instances(private_runtime):
+    """The checkpoint cleanup phase must not race across service objects."""
+    make, _, _ = private_runtime
+    services = [make() for _ in range(2)]
+    assert services[0].store.db_path == services[1].store.db_path
+    sid = seed(services[0])
+    import app.service as service_module
+    first = service_module._delete_lock(services[0].store, sid)
+    second = service_module._delete_lock(services[1].store, sid)
+    assert first is second
+    assert services[1].delete_session(sid) is True
+    assert services[0].delete_session(sid) is False
+
+
 def test_initial_generation_has_cross_process_deletion_fence(private_runtime):
     make, _, _ = private_runtime
     first = make()

@@ -40,6 +40,20 @@ STOP_COMMAND_MAX_CHARS = 12
 
 _STOP_PUNCTUATION = re.compile(r"[\s，。、；：,.;:!！?？~～\"'“”‘’()（）\[\]【】]+")
 
+# Multiple service objects can share one owner database in a process (for
+# example, parallel requests in a test runner or a development server).  The
+# database fence protects separate processes; this lock also serializes the
+# cross-database checkpoint cleanup phase, whose SQLite connection is owned by
+# a different service object and therefore cannot share ``_session_lock``.
+_DELETE_LOCKS: dict[tuple[str, str], threading.Lock] = {}
+_DELETE_LOCKS_GUARD = threading.Lock()
+
+
+def _delete_lock(store: SessionStore, session_id: str) -> threading.Lock:
+    key = (str(store.db_path.resolve()), str(session_id))
+    with _DELETE_LOCKS_GUARD:
+        return _DELETE_LOCKS.setdefault(key, threading.Lock())
+
 
 def _normalize_command(text: str) -> str:
     return _STOP_PUNCTUATION.sub("", str(text or "")).lower()
@@ -324,17 +338,21 @@ class InterviewService:
         this application creates no retained session attachment/report files.
         Keep a durable deletion fence on failure instead of exposing partial data.
         """
-        with self._session_lock(session_id):
-            if session_id in self._busy:
-                raise ServiceError("session_busy")
-            if not self.store.begin_delete(session_id):
-                return False
-            try:
-                delete_checkpoints(self._checkpointer, session_id)
-                self.store.finish_delete(session_id)
-            except Exception as exc:
-                raise ServiceError("session_cleanup_failed", 503) from exc
-            return True
+        # The process-wide lock is intentionally acquired outside the
+        # per-service lock: distinct InterviewService instances may point at
+        # the same owner database and checkpoint file.
+        with _delete_lock(self.store, session_id):
+            with self._session_lock(session_id):
+                if session_id in self._busy:
+                    raise ServiceError("session_busy")
+                if not self.store.begin_delete(session_id):
+                    return False
+                try:
+                    delete_checkpoints(self._checkpointer, session_id)
+                    self.store.finish_delete(session_id)
+                except Exception as exc:
+                    raise ServiceError("session_cleanup_failed", 503) from exc
+                return True
 
     def rename_session(self, session_id: str, name: str) -> dict:
         """重命名本会话；唯一性校验由 SessionStore.rename 完成。"""
