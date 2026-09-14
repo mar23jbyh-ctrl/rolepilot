@@ -3,7 +3,6 @@ import importlib.util
 import json
 from pathlib import Path
 import re
-import sys
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,31 +56,23 @@ def test_inventory_default_does_not_write(tmp_path, monkeypatch, capsys):
 
 def test_finish_works_without_optional_release_metadata(tmp_path, monkeypatch, capsys):
     finish = load_script('acceptance_finish')
-    output = tmp_path / 'docs/release/evidence'
-    (output / 'baseline').mkdir(parents=True)
     for relative in ('README.md', '.env.example', 'requirements.txt',
                      'frontend/package.json', 'frontend/package-lock.json'):
         path = tmp_path / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('', encoding='utf-8')
-    (output / 'baseline/source.json').write_text(
-        json.dumps({'source_sha256': {}}), encoding='utf-8')
-    (output / 'round5-offline.json').write_text(json.dumps({
-        'all_passed': True, 'checks': [{'stdout': '1 passed'}, {'stdout': 'tests 1'}],
-    }), encoding='utf-8')
-    (output / 'comparison-r2.json').write_text(json.dumps({
-        'same_uploaded_input_hashes': True,
-        'phases': {'final': {'aggregate': {'score_errors': 0}}},
-    }), encoding='utf-8')
     monkeypatch.setattr(finish, 'ROOT', tmp_path)
-    monkeypatch.setattr(finish, 'OUT', output)
-    monkeypatch.setattr(sys, 'argv', ['acceptance_finish'])
-    finish.main()
-    result = json.loads((output / 'delivery-record-1.json').read_text(encoding='utf-8'))
-    assert result['final_offline_passed'] is True
+    assert finish.main([]) == 0
+    output = tmp_path / 'docs/release/evidence/my-source-validation.json'
+    result = json.loads(output.read_text(encoding='utf-8'))
     assert result['broken_local_links'] == []
+    assert set(result['source_sha256']) == {
+        'README.md', '.env.example', 'requirements.txt',
+        'frontend/package.json', 'frontend/package-lock.json',
+    }
+    assert 'supplied_offline_result' not in result
     assert 'cleanup' not in result
-    assert json.loads(capsys.readouterr().out)['offline'] is True
+    assert json.loads(capsys.readouterr().out)['source_files'] == 5
 
 
 def test_runtime_dependencies_and_regression_fixture_are_retained():

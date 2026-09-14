@@ -1,6 +1,6 @@
 """Deterministic OCR-only benchmark. No LLM, search API or private resume.
 
-Prepare once, then compare original and repaired code on identical input hashes.
+Prepare once, then compare runs on identical input hashes.
 Ground truth is used only by metrics, never passed to the parser/upload endpoint.
 """
 from __future__ import annotations
@@ -21,7 +21,7 @@ import unicodedata
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 TRUTH = ROOT / "tests/fixtures/ocr/cases.json"
-DEFAULT_OUT = ROOT / "docs/release/evidence/ocr-20260912"
+DEFAULT_OUT = ROOT / "docs/release/evidence/my-ocr-benchmark"
 
 
 def sha256(path: Path) -> str:

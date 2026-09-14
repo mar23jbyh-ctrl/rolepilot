@@ -1,7 +1,7 @@
 r"""Opt-in release observation server; never replaces business inputs/outputs.
 
 Review before running. Example (does start the real application):
-  .venv\Scripts\python scripts\release_server.py --run-id release-20260912-a --execute
+  .venv\Scripts\python scripts\release_server.py --run-id my-provider-check --execute
 Default address: 127.0.0.1:8001. No imports of the production app on --help.
 Only use with this release's synthetic fixtures. A run refuses existing trace files.
 """

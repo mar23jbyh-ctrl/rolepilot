@@ -12,12 +12,11 @@ npm test --prefix frontend
 npm run build --prefix frontend
 ```
 
-在独立公开源目录、全新 Python 3.11 虚拟环境和锁定依赖中复验：
+使用 Python 3.11、锁定依赖和合成数据执行公开回归：
 
 | 验证层 | 结果 | 覆盖范围 |
 |---|---:|---|
 | 公开源 Python 回归 | **659 passed、7 skipped**，0 failed/error，1 条外部弃用警告 | 状态图、评分协议、SQLite 账本、上传边界、隐私边界和错误路径 |
-| 本地历史库补充回放 | 原开发目录合计 **666 passed** | 额外 7 项检查已有历史数据的兼容行为 |
 | 前端协议与组件测试 | **41 passed** | 请求字段、会话状态、重复提交、恢复提示和主要界面组件 |
 | TypeScript/Vite 构建 | **成功** | 类型检查和生产构建 |
 
@@ -25,7 +24,7 @@ npm run build --prefix frontend
 
 公开源不附带运行期会话库，因此 7 项可选历史库回放按设计跳过；核心协议测试使用临时 SQLite 和合成数据，不依赖这些历史记录。唯一警告来自 Starlette/AnyIO 的弃用别名。测试数量不是代码覆盖率或模型准确率。
 
-首次安装需在测试之外准备 `o200k_base` 分词器缓存，之后回归会阻止外部网络请求，具体命令见 [运行指南](run.md)。仓库提供 Windows GitHub Actions 回归配置；远程执行状态以仓库 Actions 页面为准。
+首次安装需在测试之外准备 `o200k_base` 分词器缓存，之后回归会阻止外部网络请求，具体命令见 [运行指南](run.md)。[GitHub Actions](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml) 在 Windows runner 上执行同一套后端回归、前端测试和构建，使用 Python 3.11 与 Node.js 22；最新状态和执行日志可在该页面查看。
 
 ## 会话可靠性
 
@@ -41,7 +40,7 @@ npm run build --prefix frontend
 
 ## HTTP 与浏览器流程
 
-除离线回归外，2026-09-14 在独立公开源目录用本机 Uvicorn/TCP、完整状态图和 SQLite 复验了端到端流程：文字材料上传、分析、岗位调研、出题、评估前暂停、回答、追问、下一题、重复提交、旧版本拒绝、服务重启恢复、报告读写和删除。
+除离线回归外，2026-09-14 使用本机 Uvicorn/TCP、完整状态图和 SQLite 验证了端到端流程：文字材料上传、分析、岗位调研、出题、评估前暂停、回答、追问、下一题、重复提交、旧版本拒绝、服务重启恢复、报告读写和删除。
 
 该轮使用隔离的模型桩和搜索桩，记录了 14 次 SDK 桩调用和 5 次搜索桩调用；这些调用没有访问真实云模型或真实 Tavily。
 
@@ -51,7 +50,7 @@ npm run build --prefix frontend
 .\.venv\Scripts\python.exe -X utf8 scripts/delivery_smoke.py --execute --output docs/release/evidence/my-smoke
 ```
 
-此前的界面验收在 Edge 浏览器中使用两份合成会话，验证了 OCR 上传与编辑、开始/暂停、回答和追问、同 ID 重试、旧版本 409、刷新恢复、历史、报告、删除和窄屏布局。该轮使用 28 次 SDK 桩调用和 10 次搜索桩调用，真实云模型和真实 Tavily 调用均为 0。本次公开源复验重新执行了前端测试、构建与本机 HTTP 流程，没有重做这轮人工浏览器验收。
+人工界面验收在 Edge 浏览器中使用两份合成会话，覆盖 OCR 上传与编辑、开始/暂停、回答和追问、同 ID 重试、旧版本 409、刷新恢复、历史、报告、删除和窄屏布局。该轮使用 28 次 SDK 桩调用和 10 次搜索桩调用，未访问真实云模型或 Tavily；它是一次人工流程检查，不属于每次 CI 自动执行的浏览器测试。
 
 这些流程验证的是产品接缝和协议行为，不是模型回答质量。为保护输入内容和本地环境信息，仓库保留可运行的测试代码，不附带原始运行日志。
 

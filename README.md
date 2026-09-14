@@ -1,5 +1,7 @@
 # RolePilot · 岗位定制面试 Agent
 
+[![Regression checks](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml)
+
 RolePilot 是一个面向求职者的岗位定制面试练习系统。用户提供简历和目标岗位描述后，系统会提炼岗位要求、分析经历匹配度、生成岗位专属题单，并在回答后围绕能力缺口进行有限追问、讲解或换题，最后给出带回答证据的参考评估。
 
 项目采用 LangGraph 编排程序约束的工作流型单 Agent。模型负责分析、生成和提出建议；程序负责状态转移、题目版本、工具权限、追问上限、评分聚合、持久化和调用预算。Tavily 用于岗位 Web 检索增强；项目不包含本地向量数据库或内置题库。
@@ -76,7 +78,7 @@ flowchart LR
 
 ### 环境要求
 
-- Python 3.11；Node.js 20 或更高版本。
+- Python 3.11；Node.js 22 或更高版本（CI 使用 Node.js 22）。
 - 一个兼容 Chat Completions、支持工具调用且能遵循 JSON 输出要求的大模型服务。服务地址可配置，不限定具体厂商；结构化结果由提示词、JSON 解析和程序校验实现。
 - Tavily API Key，用于岗位 Web 调研。搜索失败会被标记为降级，不会伪装成已联网。
 - 使用图片或扫描 PDF 时，需要本机安装 Tesseract，并准备 `chi_sim`、`eng` 语言数据。
@@ -188,7 +190,7 @@ npm test --prefix frontend
 npm run build --prefix frontend
 ```
 
-2026-09-14 独立公开源复验结果为 **659 项后端测试通过、7 项可选历史库回放跳过，41 项前端测试通过，构建成功**；原开发目录包含历史数据时合计 666 项后端测试通过。测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与历史浏览器验收的范围见 [评测与证据](docs/evaluation.md)。
+2026-09-14 公开回归结果：**659 项后端测试通过、7 项可选历史库回放跳过，41 项前端测试通过，构建成功**。测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与浏览器验收的范围见 [评测与证据](docs/evaluation.md)。
 
 还可执行不访问云端的本机 HTTP 集成验证：
 

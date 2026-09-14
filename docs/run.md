@@ -4,7 +4,7 @@
 
 ## 环境要求
 
-- Python 3.11；Node.js 20 或更高版本。
+- Python 3.11；Node.js 22 或更高版本（CI 使用 Node.js 22）。
 - 一个兼容 Chat Completions、支持工具调用且能遵循 JSON 输出要求的模型接口。`BASE_URL` 可指向不同供应商；结构化结果采用提示词约束、JSON 解析和程序校验，未启用原生 `json_schema` 响应模式。不同原生协议需要适配层。
 - Tavily API Key。没有搜索密钥或搜索失败时，流程会按代码标记降级，不会把空结果伪装成联网结果。
 - 只有上传图片或扫描 PDF 才需要 Tesseract、`chi_sim` 和 `eng`；TXT、DOCX 和文字 PDF 不依赖 OCR。

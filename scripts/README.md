@@ -12,7 +12,8 @@
 | `release_run.py` | 可选的真实供应商链路验证，合成材料位于 `tests/fixtures/release/`；先检查配置和预览，显式执行会产生费用。 |
 | `release_score_replay.py` | 对显式指定的本地会话重评失败的动机题；只读原库，需 `--target OWNER_ID:SESSION_ID`，真实执行会产生模型费用。 |
 | `release_server.py` | 验证工具使用的隔离服务入口。 |
-| `acceptance_finish.py` / `acceptance_cleanup.py` | 汇总验证结果、检查清理范围；供验证工具与回归使用。 |
+| `acceptance_finish.py` | 生成源码哈希与文档链接检查报告，无需历史验收记录，不读取运行期数据库或密钥。 |
+| `acceptance_cleanup.py` | 只读文件分类清单，区分源码、缓存和本地数据，不执行删除或移动。 |
 
 无需真实密钥的基本验证：
 
@@ -22,6 +23,16 @@
 npm test --prefix frontend
 npm run build --prefix frontend
 .\.venv\Scripts\python.exe -X utf8 scripts/delivery_smoke.py --execute --output docs/release/evidence/my-smoke
+.\.venv\Scripts\python.exe -X utf8 scripts/acceptance_finish.py --output docs/release/evidence/my-source-validation.json
 ```
+
+可选真实供应商验证先预览输入与参数：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 scripts/release_server.py --run-id my-provider-check
+.\.venv\Scripts\python.exe -X utf8 scripts/release_run.py --run-id my-provider-check --base-url http://127.0.0.1:8001 --answer-mode templates
+```
+
+配置有效模型与 Tavily 密钥后，在两个终端分别给上述命令追加 `--execute`，先启动服务，再运行驱动。`templates` 使用固定合成回答；`llm` 会额外调用模型模拟回答。两种模式都会产生面试业务模型和搜索调用。每次使用新的 `run-id`，原始结果仅保存在本地，不应作为模型准确率或生产稳定性的证明。
 
 详情见 [运行指南](../docs/run.md) 与 [评测说明](../docs/evaluation.md)。

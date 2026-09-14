@@ -36,8 +36,8 @@ frontend/dist/
 # 评测产物（scripts/ 下的评测脚本生成，可随时重跑）
 data/*.json
 
-# ---- 维护者个人验收与分析材料（不属于用户运行所需源码） ----
-# 这些文件保留在本地用于复盘；公开发行时不要使用 git add -f 重新加入。
+# ---- 本地评测产物和实验工具 ----
+# 公开验证入口通过下方例外规则保留。
 docs/release/
 scripts/acceptance_*.py
 scripts/build_guard_cases.py

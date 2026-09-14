@@ -1,7 +1,7 @@
 r"""Opt-in full release HTTP driver using public JD summaries and fictional resumes.
 
 Review first. No services, app imports or real calls on import / --help / without --execute.
-  .venv\Scripts\python scripts\release_run.py --run-id release-20260912-a --execute
+  .venv\Scripts\python scripts\release_run.py --run-id my-provider-check --execute
 Default: all three cases, configured question count, real candidate LLM, natural END.
 Candidate generation and business-model usage are separately recorded. This is a
 workflow/reliability test, NOT an independent assessment-quality evaluation.
