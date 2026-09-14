@@ -210,12 +210,20 @@ def run(output, hold_seconds=0):
             assert status == 200 and "<title>RolePilot" in html
             _, openapi = request("GET", "/openapi.json")
             assert openapi["info"]["title"] == "RolePilot API"
-            _, credential = request("POST", "/api/auth/anonymous")
-            token = credential["token"]  # NEVER exported or logged.
             boundary = "rolepilot-synthetic-upload"
             resume = "合成候选人：业务分析方向在校生。技能 SQL、数据核对。合成校园分析项目用 SQL 聚合数据并抽样检查结果。"
             raw = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="synthetic.txt"\r\n'
                    'Content-Type: text/plain\r\n\r\n' + resume + f'\r\n--{boundary}--\r\n').encode()
+            status, context = request("GET", "/api/auth/context")
+            assert status == 200 and set(context) == {"server_id"}
+            token = "unissued-synthetic-token"  # Simulate a browser carrying another copy's token.
+            assert request("POST", "/api/uploads/resume", raw=raw, content_type="multipart/form-data; boundary="+boundary)[0] == 401
+            status, credential = request("POST", "/api/auth/anonymous")
+            assert status == 201 and credential["reused"] is False
+            assert credential["server_id"] == context["server_id"]
+            token = credential["token"]  # NEVER exported or logged.
+            status, reused = request("POST", "/api/auth/anonymous")
+            assert status == 200 and reused["reused"] is True and reused["token"] == token
             status, extracted = request("POST", "/api/uploads/resume", raw=raw, content_type="multipart/form-data; boundary="+boundary)
             assert status == 200 and extracted["text"] == resume
             status, first = request("POST", "/api/sessions", {"resume_text": extracted["text"],
@@ -243,6 +251,7 @@ def run(output, hold_seconds=0):
             assert status == 200 and third["question_version"] == 3
             stop(child); child = None
             child = start()
+            assert request("GET", "/api/auth/context")[1] == context
             status, restored = request("GET", route)
             assert status == 200 and restored["question_version"] == 3 and digest(restored["messages"]) == digest(third["messages"])
             status, finished = request("POST", route+"/stop")
@@ -265,6 +274,8 @@ def run(output, hold_seconds=0):
                       "concurrent_http_statuses": [item[0] for item in concurrent],
                       "answer_assessments": 2, "versions": [first["question_version"],second["question_version"],third["question_version"]],
                       "replay_added_calls": 0, "stale_http_status": 409, "restart_restored": True,
+                      "authentication": {"stale_upload_status": 401, "recovered_upload_status": 200,
+                                         "valid_identity_reused": True, "namespace_persists_after_restart": True},
                       "score": finished["report"]["overall_score"], "grade": finished["report"]["grade"],
                       "usage_is_fixture_not_provider_measurement": True, "report_cost": None,
                       "delete_get_status": 404, "originals_remaining": 0, "requests": records, "trace": trace,

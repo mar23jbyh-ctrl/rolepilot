@@ -32,6 +32,13 @@ class AnonymousIdentityStore:
                     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )"""
             )
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS anonymous_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)"
+            )
+            conn.execute(
+                "INSERT OR IGNORE INTO anonymous_metadata(key, value) VALUES ('server_id', ?)",
+                (uuid.uuid4().hex,),
+            )
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
@@ -52,6 +59,14 @@ class AnonymousIdentityStore:
                 (hashlib.sha256(token.encode("ascii")).hexdigest(), owner),
             )
         return token
+
+    def server_id(self) -> str:
+        """A persistent, non-secret namespace; never usable as a bearer token."""
+        with self._connect() as conn:
+            row = conn.execute("SELECT value FROM anonymous_metadata WHERE key = 'server_id'").fetchone()
+        if row is None:
+            raise sqlite3.DatabaseError("Anonymous identity namespace unavailable")
+        return str(row[0])
 
     def resolve(self, token: str) -> str | None:
         if not _TOKEN_RE.fullmatch(token):

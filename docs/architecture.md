@@ -61,6 +61,12 @@ flowchart TD
 
 匿名凭据到 owner 的映射另存于身份 SQLite，独立于上述会话存储。会话业务库与检查点库在正常流程中互相核对，但没有跨数据库原子事务。外部模型请求也不与本地数据库组成分布式事务，因此系统不能承诺外部调用 exactly-once。
 
+### 浏览器身份与环境切换
+
+身份库保存稳定的 `server_id`，它只用于区分数据环境，不授予数据访问权。前端先获取 `/api/auth/context`，再携带该环境保存的 Bearer 调用 `/api/auth/anonymous`：有效凭据复用同一 owner，无法解析的凭据由服务端重新签发。数据库或网络故障不会当成凭据失效而创建新身份。
+
+活动会话、草稿和待确认回答按 `server_id` 与匿名身份隔离；旧浏览器记录只有在原凭据验证通过后才迁移。切换环境时保留已编辑的简历与 JD，重载当前环境的历史和活动会话，切回原环境可继续读取原恢复记录。原会话的回答、停止、改岗位和删除请求不会因凭据恢复而自动重发；在业务执行前被鉴权拒绝的上传、历史列表与新面试请求最多恢复一次。
+
 ## 回答提交协议
 
 前端在发送前冻结 `answer_request_id`、题目版本和回答正文；网络不确定时重试同一组值。后端在 SQLite 事务中：
@@ -101,3 +107,4 @@ flowchart TD
 - 评分：[app/scoring/protocol.py](../app/scoring/protocol.py)、[app/nodes/assess.py](../app/nodes/assess.py)、[app/nodes/evaluate.py](../app/nodes/evaluate.py)
 - 调用和预算：[app/llm/client.py](../app/llm/client.py)、[app/context/budget.py](../app/context/budget.py)、[app/telemetry/ledger.py](../app/telemetry/ledger.py)
 - 工具：[app/tools/schemas.py](../app/tools/schemas.py)、[app/tools/executor.py](../app/tools/executor.py)
+- 浏览器身份：[app/security.py](../app/security.py)、[api/routers/auth.py](../api/routers/auth.py)、[frontend/src/api/client.ts](../frontend/src/api/client.ts)、[frontend/src/api/browserSession.ts](../frontend/src/api/browserSession.ts)

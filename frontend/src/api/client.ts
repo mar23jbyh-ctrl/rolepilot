@@ -5,9 +5,11 @@ import type {
   SessionSummary,
   UploadResult,
 } from "../types";
+import { browserIdentity, selectBrowserIdentity } from "./browserSession";
 
 const CREDENTIAL_KEY = "interview_anonymous_bearer_v1";
 let bootstrap: Promise<string> | null = null;
+let currentCredential = "";
 const ERROR_MESSAGES: Record<string, string> = {
   session_budget_exhausted: "当前会话无法继续生成，请结束并查看已有结果。",
   stale_question_version: "题目已更新，旧题回答未被评分；请刷新题目后重新作答。",
@@ -18,7 +20,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   recovery_required: "回答处理需要服务端恢复；原请求已保留。可恢复原回答，或保留故障会话后开始新面试。",
   session_not_answerable: "当前面试已结束或不可继续，请查看最新会话状态。",
   session_completed: "面试已结束，请查看最新报告。",
-  session_not_found: "当前凭证下找不到该会话；请确认没有清除或更换匿名凭证。",
+  session_not_found: "当前服务中找不到这场面试，请从历史列表选择会话或开始新面试。",
+  interview_environment_changed: "面试服务已切换，原回答已保留；请从当前历史列表选择会话或开始新面试。",
   answer_request_not_found: "服务端尚未记录该回答请求，可恢复原回答重试。",
   operation_failed: "服务暂时无法完成操作，请稍后重试。",
   invalid_request: "请求内容不符合要求，请检查输入。",
@@ -49,7 +52,7 @@ export class ApiError extends Error {
   constructor(public status: number, public detail: unknown) {
     const value = detail as { message?: string; code?: string; status?: string } | null;
     super(ERROR_MESSAGES[errorCode(detail)] || (status === 401
-      ? "匿名凭证缺失或无效；为避免丢失会话，系统不会自动更换凭证。"
+      ? "暂时无法连接面试服务，请稍后重试。"
       : typeof detail === "string" ? detail : value?.message || `请求失败（${status}）`));
   }
   get code(): string {
@@ -57,27 +60,47 @@ export class ApiError extends Error {
   }
 }
 
-async function createCredential(): Promise<string> {
-  const existing = localStorage.getItem(CREDENTIAL_KEY);
-  if (existing) return existing;
-  const response = await fetch("/api/auth/anonymous", { method: "POST", cache: "no-store" });
-  if (!response.ok) throw new ApiError(response.status, "匿名凭证创建失败，请重试");
-  const credential = await response.json() as { token: string; token_type: string };
-  if (!/^[A-Za-z0-9_-]{43}$/.test(credential.token) || credential.token_type !== "Bearer") {
-    throw new Error("匿名凭证响应无效");
+async function createCredential(environmentRetries = 1): Promise<string> {
+  const context = await fetch("/api/auth/context", { cache: "no-store" });
+  if (!context.ok) throw new ApiError(context.status, "面试服务暂时不可用，请稍后重试。");
+  const { server_id: serverId } = await context.json() as { server_id: string };
+  if (!/^[0-9a-f]{32}$/.test(serverId)) throw new Error("面试服务响应异常，请刷新后重试。");
+  const key = `interview_anonymous_bearer_v2::${serverId}`;
+  const saved = localStorage.getItem(key);
+  const legacy = localStorage.getItem(CREDENTIAL_KEY);
+  const existing = saved || legacy;
+  const headers = new Headers();
+  if (existing) headers.set("Authorization", `Bearer ${existing}`);
+  const response = await fetch("/api/auth/anonymous", { method: "POST", headers, cache: "no-store" });
+  if (!response.ok) throw new ApiError(response.status, "面试服务暂时不可用，请稍后重试。");
+  const credential = await response.json() as {
+    token: string; token_type: string; server_id: string; identity_id: string; reused: boolean;
+  };
+  if (!/^[A-Za-z0-9_-]{43}$/.test(credential.token) || credential.token_type !== "Bearer" ||
+      !/^[0-9a-f]{32}$/.test(credential.server_id) || !/^[0-9a-f]{32}$/.test(credential.identity_id) ||
+      typeof credential.reused !== "boolean") {
+    throw new Error("面试服务响应异常，请刷新后重试。");
   }
-  localStorage.setItem(CREDENTIAL_KEY, credential.token);
+  // Re-read the vault for the new environment rather than overwrite its identity
+  // if the backend switched between context lookup and bootstrap.
+  if (credential.server_id !== serverId) {
+    if (environmentRetries > 0) return await createCredential(environmentRetries - 1);
+    throw new Error("面试服务正在切换，请稍后重试。");
+  }
+  localStorage.setItem(`interview_anonymous_bearer_v2::${credential.server_id}`, credential.token);
+  const migrateLegacy = existing === legacy && credential.reused && credential.token === legacy;
+  selectBrowserIdentity(credential.server_id, credential.identity_id, migrateLegacy);
+  currentCredential = credential.token;
   return credential.token;
 }
 
-export async function anonymousCredential(): Promise<string> {
-  const existing = localStorage.getItem(CREDENTIAL_KEY);
-  if (existing) return existing;
+export async function anonymousCredential(refresh = false): Promise<string> {
+  if (currentCredential && !refresh && !bootstrap) return currentCredential;
   if (!bootstrap) {
     // Coordinate first visits across same-origin tabs where Web Locks is supported.
     bootstrap = (async () => {
       if (navigator.locks) {
-        return await navigator.locks.request("interview-anonymous-bootstrap", createCredential);
+        return await navigator.locks.request("interview-anonymous-bootstrap", () => createCredential());
       }
       return await createCredential();
     })().finally(() => { bootstrap = null; });
@@ -87,13 +110,25 @@ export async function anonymousCredential(): Promise<string> {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function once<T>(path: string, init: RequestInit): Promise<T> {
+async function once<T>(path: string, init: RequestInit, recover = true): Promise<T> {
+  const previousIdentity = browserIdentity();
+  const canRecover = path.startsWith("/api/uploads/") || path === "/api/sessions";
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Bearer ${await anonymousCredential()}`);
+  const identity = browserIdentity();
+  if (!canRecover && previousIdentity && previousIdentity !== identity) {
+    throw new ApiError(409, "interview_environment_changed");
+  }
   if (init.body && !(init.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
   const response = await fetch(path, { ...init, headers, cache: "no-store" });
+  if (browserIdentity() !== identity && !path.startsWith("/api/uploads/")) {
+    if (path === "/api/sessions" && (init.method || "GET").toUpperCase() === "GET" && recover) {
+      return await once<T>(path, init, false);
+    }
+    throw new ApiError(409, "interview_environment_changed");
+  }
   if (!response.ok) {
     let detail: unknown = `请求失败（${response.status}）`;
     try {
@@ -103,15 +138,21 @@ async function once<T>(path: string, init: RequestInit): Promise<T> {
     } catch {
       /* keep the default message */
     }
-    // Never silently replace an invalid credential with a different owner.
+    if (response.status === 401 && recover) {
+      await anonymousCredential(true);
+      // Only authentication-rejected uploads, history listing and new interviews
+      // can be replayed. An old session's answer is never sent to a new identity.
+      if (canRecover) return await once<T>(path, init, false);
+      if (browserIdentity() !== identity) throw new ApiError(409, "interview_environment_changed");
+    }
     throw new ApiError(response.status, detail);
   }
   return (await response.json()) as T;
 }
 
 /**
- * 读请求在网络抖动时自动重试一次；写请求（提交回答/开始面试）绝不自动重试，
- * 避免重复生成题目或重复计分。
+ * 网络抖动只重试读请求。鉴权在业务执行前拒绝的上传、列表和新面试
+ * 最多恢复一次；已有会话的写请求不自动重发。
  */
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const method = (init.method || "GET").toUpperCase();

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { api, ApiError } from "../api/client";
+import { api, ApiError, anonymousCredential } from "../api/client";
+import { browserIdentity, browserSessionKey, onBrowserIdentityChanged } from "../api/browserSession";
 import type {
   AnswerRequest,
   AnswerResult,
@@ -21,7 +22,7 @@ interface PendingAnswer {
 
 function readPending(): PendingAnswer | null {
   try {
-    const saved = sessionStorage.getItem(PENDING_KEY);
+    const saved = sessionStorage.getItem(browserSessionKey(PENDING_KEY));
     if (!saved) return null;
     const pending = JSON.parse(saved) as PendingAnswer;
     return pending.sessionId && typeof pending.body?.answer === "string" &&
@@ -135,7 +136,7 @@ function toViewing(payload: SessionPayload): ViewingSession {
 
 export function useInterview() {
   const [state, setState] = useState<InterviewState>(initialState);
-  const pendingRef = useRef<PendingAnswer | null>(readPending());
+  const pendingRef = useRef<PendingAnswer | null>(null);
   const mutationInFlight = useRef(false);
   const activeSnapshot = useRef({ sessionId: "", questionVersion: 0, done: false });
 
@@ -155,7 +156,7 @@ export function useInterview() {
       }
       activeSnapshot.current = { sessionId: payload.session_id, questionVersion: payload.question_version, done: payload.done };
       if (payload.session_id) {
-        localStorage.setItem(ACTIVE_SESSION_KEY, payload.session_id);
+        localStorage.setItem(browserSessionKey(ACTIVE_SESSION_KEY), payload.session_id);
       }
       setState((prev) => ({
         ...prev,
@@ -181,7 +182,7 @@ export function useInterview() {
   );
 
   const clearPending = useCallback(() => {
-    sessionStorage.removeItem(PENDING_KEY);
+    sessionStorage.removeItem(browserSessionKey(PENDING_KEY));
     pendingRef.current = null;
     patch({ pendingAnswer: false, recoveryRequired: false });
   }, [patch]);
@@ -196,6 +197,7 @@ export function useInterview() {
   }, [patch]);
 
   const settleAnswer = useCallback(async (pending: PendingAnswer, first: AnswerResult) => {
+    const identity = browserIdentity();
     let result = first;
     if (result.status === "recovery_required") {
       throw new ApiError(409, "recovery_required");
@@ -206,6 +208,7 @@ export function useInterview() {
         throw new ApiError(409, "recovery_required");
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (browserIdentity() !== identity) throw new ApiError(409, "interview_environment_changed");
       result = await api.answerStatus(pending.sessionId, pending.body.answer_request_id);
       if (result.status === "recovery_required") {
         throw new ApiError(409, "recovery_required");
@@ -218,29 +221,48 @@ export function useInterview() {
     // A replay can describe an older question. Always display the current projection.
     const complete = result as SessionPayload;
     const latest = complete.replayed ? await api.getSession(pending.sessionId) : complete;
+    if (browserIdentity() !== identity) throw new ApiError(409, "interview_environment_changed");
     clearPending();
     applyPayload(latest);
     void refreshSessions();
   }, [applyPayload, clearPending, refreshSessions]);
 
   useEffect(() => {
-    void (async () => {
-      await refreshSessions();
-      const saved = localStorage.getItem(ACTIVE_SESSION_KEY);
-      if (!saved) return;
+    let cancelled = false;
+    let generation = 0;
+    const restore = async () => {
+      const run = ++generation;
       try {
+        await anonymousCredential();
+        if (cancelled || run !== generation) return;
+        pendingRef.current = readPending();
+        const sessions = await api.listSessions();
+        if (cancelled || run !== generation) return;
+        patch({ sessions });
+        const saved = localStorage.getItem(browserSessionKey(ACTIVE_SESSION_KEY));
+        if (!saved) return;
         const payload = await api.getSession(saved);
+        if (cancelled || run !== generation) return;
         applyPayload(payload);
         const pending = pendingRef.current;
         if (pending) {
           patch({ pendingAnswer: true, recoveryRequired: Boolean(pending.recoveryRequired), error: "有未确认的回答，请恢复原请求后再继续面试" });
         }
       } catch (error) {
-        // Transient failures and a bad credential must not destroy recovery data.
-        patch({ error: (error as Error).message });
+        if (!cancelled && run === generation) patch({ error: (error as Error).message });
       }
-    })();
-  }, [refreshSessions, applyPayload, patch]);
+    };
+    const unsubscribe = onBrowserIdentityChanged(() => {
+      pendingRef.current = null;
+      activeSnapshot.current = { sessionId: "", questionVersion: 0, done: false };
+      // Uploaded/edited materials remain available when the data environment changes.
+      setState((prev) => ({ ...initialState, resumeText: prev.resumeText, resumeName: prev.resumeName,
+        resumeMethod: prev.resumeMethod, jdText: prev.jdText, jdOcr: prev.jdOcr }));
+      void restore();
+    });
+    void restore();
+    return () => { cancelled = true; generation++; unsubscribe(); };
+  }, [applyPayload, patch]);
 
   const run = useCallback(
     async <T,>(task: () => Promise<T>, onSuccess: (value: T) => void) => {
@@ -321,6 +343,7 @@ export function useInterview() {
   const submitPending = useCallback(async (pending: PendingAnswer, retry: boolean) => {
     if (mutationInFlight.current) return;
     mutationInFlight.current = true;
+    const identity = browserIdentity();
     patch({ loading: true, pendingAnswer: true, error: "" });
     try {
       let result: AnswerResult;
@@ -335,13 +358,17 @@ export function useInterview() {
       } else {
         result = await api.answer(pending.sessionId, pending.body);
       }
-      await settleAnswer(pending, result);
+      if (browserIdentity() === identity) await settleAnswer(pending, result);
     } catch (error) {
+      if (browserIdentity() !== identity) {
+        patch({ loading: false });
+        return;
+      }
       if (error instanceof ApiError && error.code === "recovery_required") {
         pending.recoveryRequired = true;
         pendingRef.current = pending;
         try {
-          sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+          sessionStorage.setItem(browserSessionKey(PENDING_KEY), JSON.stringify(pending));
         } catch {
           // In-memory state still protects this tab; the backend gate remains closed.
         }
@@ -372,7 +399,7 @@ export function useInterview() {
     if (mutationInFlight.current || !pendingRef.current?.recoveryRequired) return;
     // Explicit escape only after confirmed recovery_required. No server DELETE,
     // gate release, new answer ID, or graph invocation for the old session.
-    localStorage.removeItem(ACTIVE_SESSION_KEY);
+    localStorage.removeItem(browserSessionKey(ACTIVE_SESSION_KEY));
     clearPending();
     activeSnapshot.current = { sessionId: "", questionVersion: 0, done: false };
     setState((prev) => ({
@@ -394,7 +421,7 @@ export function useInterview() {
     };
     try {
       // Tab-scoped persistence survives reload without sharing resume text across tabs.
-      sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+      sessionStorage.setItem(browserSessionKey(PENDING_KEY), JSON.stringify(pending));
     } catch {
       patch({ error: "无法保存待确认回答；未发送请求，请检查浏览器存储权限" });
       return;
@@ -467,9 +494,9 @@ export function useInterview() {
       patch({ loading: true, error: "" });
       try {
         await api.deleteSession(sessionId);
-        localStorage.removeItem(`interview_draft_${sessionId}`);
-        if (localStorage.getItem(ACTIVE_SESSION_KEY) === sessionId) {
-          localStorage.removeItem(ACTIVE_SESSION_KEY);
+        localStorage.removeItem(browserSessionKey(`interview_draft_${sessionId}`));
+        if (localStorage.getItem(browserSessionKey(ACTIVE_SESSION_KEY)) === sessionId) {
+          localStorage.removeItem(browserSessionKey(ACTIVE_SESSION_KEY));
           activeSnapshot.current = { sessionId: "", questionVersion: 0, done: false };
           setState((prev) => ({
             ...prev,

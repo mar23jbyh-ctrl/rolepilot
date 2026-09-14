@@ -169,7 +169,7 @@ Linux/macOS 将 Python 路径替换为 `.venv/bin/python`，其余命令相同�
 5. 点击“结束并评估”，或让题单自然结束，查看岗位维度参考报告。
 6. 在历史列表中只读查看、重命名或删除已保存会话。
 
-首次访问会创建匿名 Bearer 凭据。凭据保存在浏览器同源存储中；切换 `localhost` 与 `127.0.0.1`、切换端口或清除站点数据，可能导致当前浏览器无法访问原会话。
+首次访问自动建立匿名访问身份，无需注册。浏览器按后端数据环境分别保存凭据和会话恢复记录：在同一地址切换本地实例时可以继续上传，切回原数据环境时复用原凭据；已有会话的回答不会自动转发到新身份。请保持浏览器地址一致，清除站点数据会移除这些本地恢复信息。
 
 ## 配置重点
 
@@ -209,8 +209,8 @@ npm run build --prefix frontend
 
 | 检查 | 结果 |
 |---|---|
-| 后端 Pytest | **659 passed，7 skipped**（可选历史库回放） |
-| 前端测试 | **41 passed** |
+| 后端 Pytest | **669 passed，7 skipped**（可选历史库回放） |
+| 前端测试 | **66 passed** |
 | TypeScript / Vite | **类型检查与构建通过** |
 
 测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与浏览器验收的范围见 [评测与证据](docs/evaluation.md)。最新远程结果可在 [GitHub Actions](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml) 查看。

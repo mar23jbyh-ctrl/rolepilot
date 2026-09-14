@@ -66,6 +66,101 @@ def test_reopening_database_preserves_credential_resolution(boundary):
     assert bool(reopened.resolve(credential["token"]) == owner)
 
 
+def test_context_is_persistent_non_secret_and_does_not_issue_identity(boundary):
+    client, store = boundary
+    response = client.get("/api/auth/context")
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["pragma"] == "no-cache"
+    assert set(response.json()) == {"server_id"}
+    server_id = response.json()["server_id"]
+    assert re.fullmatch(r"[0-9a-f]{32}", server_id)
+    assert AnonymousIdentityStore(store.db_path).server_id() == server_id
+    assert store.resolve(server_id) is None
+    with sqlite3.connect(store.db_path) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM anonymous_identities").fetchone()[0] == 0
+
+
+def test_distinct_data_environments_have_distinct_namespaces(tmp_path):
+    first = AnonymousIdentityStore(tmp_path / "first.db")
+    second = AnonymousIdentityStore(tmp_path / "second.db")
+    assert first.server_id() != second.server_id()
+    token = first.issue()
+    assert second.resolve(token) is None
+
+
+def test_existing_identity_database_upgrade_preserves_token_and_owner(tmp_path):
+    path = tmp_path / "legacy.db"
+    token = "a" * 43
+    with sqlite3.connect(path) as conn:
+        conn.execute("CREATE TABLE anonymous_identities (token_hash TEXT PRIMARY KEY, owner_id TEXT NOT NULL UNIQUE, created_at TEXT)")
+        conn.execute("INSERT INTO anonymous_identities VALUES (?, ?, CURRENT_TIMESTAMP)",
+                     (hashlib.sha256(token.encode("ascii")).hexdigest(), "b" * 32))
+    upgraded = AnonymousIdentityStore(path)
+    assert upgraded.resolve(token) == "b" * 32
+    assert re.fullmatch(r"[0-9a-f]{32}", upgraded.server_id())
+
+
+def test_concurrent_database_open_uses_one_persistent_namespace(tmp_path):
+    path = tmp_path / "parallel-context.db"
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        ids = list(pool.map(lambda _: AnonymousIdentityStore(path).server_id(), range(16)))
+    assert len(set(ids)) == 1
+
+
+def test_bootstrap_reuses_valid_identity_without_creating_another_owner(boundary):
+    client, store = boundary
+    first = client.post("/api/auth/anonymous").json()
+    response = client.post("/api/auth/anonymous", headers={"Authorization": "Bearer " + first["token"]})
+    assert response.status_code == 200
+    again = response.json()
+    assert again["reused"] is True
+    for field in ("token", "server_id", "identity_id"):
+        assert again[field] == first[field]
+    assert again["identity_id"] == store.resolve(first["token"])
+    with sqlite3.connect(store.db_path) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM anonymous_identities").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("authorization", ["Bearer " + "a" * 43, "Bearer malformed", "Basic invalid"])
+def test_bootstrap_replaces_only_unresolvable_capabilities(boundary, authorization):
+    client, store = boundary
+    response = client.post("/api/auth/anonymous", headers={"Authorization": authorization})
+    assert response.status_code == 201
+    credential = response.json()
+    assert credential["reused"] is False
+    assert store.resolve(credential["token"]) == credential["identity_id"]
+
+
+def test_context_failure_is_redacted_and_does_not_issue_token(boundary, monkeypatch):
+    client, store = boundary
+
+    def unavailable():
+        raise sqlite3.OperationalError("synthetic private storage path")
+
+    monkeypatch.setattr(store, "server_id", unavailable)
+    response = client.get("/api/auth/context")
+    assert response.status_code == 503
+    assert "synthetic private" not in response.text
+
+
+def test_failed_validation_never_silently_creates_new_identity(boundary, monkeypatch):
+    client, store = boundary
+    token = store.issue()
+
+    def unavailable(*args):
+        raise sqlite3.OperationalError("synthetic private connection")
+
+    def forbidden():
+        raise AssertionError("Storage errors must not create a replacement identity")
+
+    monkeypatch.setattr(store, "resolve", unavailable)
+    monkeypatch.setattr(store, "issue", forbidden)
+    response = client.post("/api/auth/anonymous", headers={"Authorization": "Bearer " + token})
+    assert response.status_code == 503
+    assert "synthetic private" not in response.text
+
+
 @pytest.mark.parametrize("headers", [
     {}, {"Authorization": "Bearer not-issued"}, {"Authorization": "Basic invalid"},
     {"Authorization": "Bearer"}, {"Authorization": "Bearer a b"},

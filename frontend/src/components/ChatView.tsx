@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { ChatMessage, Report } from "../types";
 import { MessageBubble } from "./MessageBubble";
+import { browserSessionKey } from "../api/browserSession";
 
 interface Props {
   sessionId: string;
@@ -35,7 +36,7 @@ export function ChatView({
   readOnly = false,
   onBack,
 }: Props) {
-  const draftKey = sessionId ? `interview_draft_${sessionId}` : "";
+  const draftKey = sessionId ? browserSessionKey(`interview_draft_${sessionId}`) : "";
   const [draft, setDraft] = useState(() =>
     draftKey ? localStorage.getItem(draftKey) || "" : ""
   );

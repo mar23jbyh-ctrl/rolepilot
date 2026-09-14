@@ -26,6 +26,11 @@ function load(relative, mocks, globals) {
   vm.runInNewContext(output, {
     module, exports: module.exports,
     require: (name) => {
+      if (name in mocks) return mocks[name];
+      if (name === "./browserSession" || name === "../api/browserSession") {
+        return { browserSessionKey: (key) => key, browserIdentity: () => "synthetic-identity",
+          selectBrowserIdentity: () => {}, onBrowserIdentityChanged: () => () => {} };
+      }
       if (!(name in mocks)) throw new Error("Unexpected import: " + name);
       return mocks[name];
     },
@@ -108,7 +113,9 @@ function hook(overrides = {}, options = {}) {
     ...overrides,
   };
   let ids = 0;
-  const { useInterview } = load("hooks/useInterview.ts", { react, "../api/client": { api, ApiError } }, {
+  const { useInterview } = load("hooks/useInterview.ts", { react, "../api/client": {
+    api, ApiError, anonymousCredential: options.anonymousCredential || (async () => "synthetic-credential"),
+  }, ...(options.browserSession ? { "../api/browserSession": options.browserSession } : {}) }, {
     localStorage, sessionStorage, crypto: { randomUUID: () => { ids++; return requestId; } },
     setTimeout: (callback) => { queueMicrotask(callback); return 0; },
   });
@@ -125,7 +132,10 @@ test("client bootstraps once and sends only server bearer credentials", async ()
     localStorage, navigator: {}, setTimeout,
     fetch: async (url, init) => {
       calls.push({ url, init });
-      return url === "/api/auth/anonymous" ? response(201, { token: "a".repeat(43), token_type: "Bearer" }) : response(200, []);
+      if (url === "/api/auth/context") return response(200, { server_id: "1".repeat(32) });
+      return url === "/api/auth/anonymous" ? response(201, {
+        token: "a".repeat(43), token_type: "Bearer", server_id: "1".repeat(32), identity_id: "2".repeat(32), reused: false,
+      }) : response(200, []);
     },
   });
   await Promise.all([api.listSessions(), api.listSessions()]);
@@ -137,13 +147,13 @@ test("client bootstraps once and sends only server bearer credentials", async ()
   }
 });
 
-test("401 preserves the existing credential and structured HTTP error", async () => {
+test("bootstrap storage failure preserves the existing credential and HTTP error", async () => {
   const localStorage = storage(); localStorage.setItem(credentialKey, "a".repeat(43)); const calls = [];
   const { api, ApiError } = load("api/client.ts", {}, {
     localStorage, navigator: {}, setTimeout,
-    fetch: async (url) => { calls.push(url); return response(401, { detail: "credential_invalid" }); },
+    fetch: async (url) => { calls.push(url); return response(503, { detail: "storage_unavailable" }); },
   });
-  await assert.rejects(api.listSessions(), (error) => error instanceof ApiError && error.status === 401);
+  await assert.rejects(api.listSessions(), (error) => error instanceof ApiError && error.status === 503);
   assert.equal(calls.length, 1);
   assert.equal(calls.includes("/api/auth/anonymous"), false);
   assert.ok(localStorage.getItem(credentialKey));
@@ -153,7 +163,13 @@ test("answer POST carries all three fields and is not blindly retried", async ()
   const localStorage = storage(); localStorage.setItem(credentialKey, "a".repeat(43)); const calls = [];
   const { api } = load("api/client.ts", {}, {
     localStorage, navigator: {}, setTimeout,
-    fetch: async (url, init) => { calls.push(JSON.parse(init.body)); throw new TypeError("synthetic network failure"); },
+    fetch: async (url, init) => {
+      if (url === "/api/auth/context") return response(200, { server_id: "1".repeat(32) });
+      if (url === "/api/auth/anonymous") return response(200, {
+        token: "a".repeat(43), token_type: "Bearer", server_id: "1".repeat(32), identity_id: "2".repeat(32), reused: true,
+      });
+      calls.push(JSON.parse(init.body)); throw new TypeError("synthetic network failure");
+    },
   });
   await assert.rejects(api.answer("synthetic-session", savedPending().body));
   assert.equal(calls.length, 1);
@@ -361,4 +377,57 @@ test("active status follows the backend instead of inventing interviewing", asyn
   const h = hook({ getSession: async () => payload(1, { status: "failed", question: "" }) });
   await h.mount();
   assert.equal(h.render().state.status, "failed");
+});
+
+test("mount waits for identity preparation before reading recovery data", async () => {
+  let ready; let reads = 0;
+  const prepared = new Promise((resolve) => { ready = resolve; });
+  const h = hook({ getSession: async () => { reads++; return payload(); } }, { anonymousCredential: () => prepared });
+  await h.mount();
+  assert.equal(reads, 0);
+  assert.equal(h.render().state.activeSessionId, "");
+  ready("synthetic-credential"); await flush();
+  assert.equal(reads, 1);
+  assert.equal(h.render().state.activeSessionId, "synthetic-session");
+});
+
+test("live environment change preserves materials and isolates old pending state", async () => {
+  const localStorage = storage(); const sessionStorage = storage();
+  const browserSession = load("api/browserSession.ts", {}, { localStorage, sessionStorage });
+  browserSession.selectBrowserIdentity("1".repeat(32), "2".repeat(32), false);
+  localStorage.setItem(browserSession.browserSessionKey("interview_active_session"), "synthetic-session");
+  sessionStorage.setItem(browserSession.browserSessionKey(pendingKey), JSON.stringify(savedPending()));
+  const oldKey = browserSession.browserSessionKey(pendingKey);
+  const h = hook({}, { localStorage, sessionStorage, browserSession });
+  const view = await h.mount();
+  view.patch({ resumeText: "Synthetic edited resume", resumeName: "synthetic.txt", jdText: "Synthetic edited JD" });
+  browserSession.selectBrowserIdentity("3".repeat(32), "4".repeat(32), false); await flush();
+  const state = h.render().state;
+  assert.equal(state.resumeText, "Synthetic edited resume");
+  assert.equal(state.jdText, "Synthetic edited JD");
+  assert.equal(state.activeSessionId, "");
+  assert.equal(state.pendingAnswer, false);
+  assert.equal(state.error, "");
+  assert.ok(sessionStorage.getItem(oldKey));
+});
+
+test("late answer from the old environment cannot clear new pending or display its question", async () => {
+  const localStorage = storage(); const sessionStorage = storage();
+  const browserSession = load("api/browserSession.ts", {}, { localStorage, sessionStorage });
+  browserSession.selectBrowserIdentity("1".repeat(32), "2".repeat(32), false);
+  localStorage.setItem(browserSession.browserSessionKey("interview_active_session"), "synthetic-session");
+  let complete;
+  const h = hook({ answer: () => new Promise((resolve) => { complete = resolve; }) },
+    { localStorage, sessionStorage, browserSession });
+  const view = await h.mount();
+  const submitted = view.answer("Synthetic original answer");
+  const oldKey = browserSession.browserSessionKey(pendingKey);
+  browserSession.selectBrowserIdentity("3".repeat(32), "4".repeat(32), false); await flush();
+  const newKey = browserSession.browserSessionKey(pendingKey);
+  sessionStorage.setItem(newKey, "Synthetic new-environment pending sentinel");
+  complete(payload(2)); await submitted;
+  assert.ok(sessionStorage.getItem(oldKey));
+  assert.equal(sessionStorage.getItem(newKey), "Synthetic new-environment pending sentinel");
+  assert.equal(h.render().state.questionVersion, 0);
+  assert.equal(h.render().state.activeSessionId, "");
 });

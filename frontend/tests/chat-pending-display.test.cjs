@@ -24,6 +24,7 @@ vm.runInNewContext(source, {
     if (name === "lucide-react") return new Proxy({}, { get: () => () => null });
     if (name === "react") return { ...React, useState: () => ["Synthetic unsent draft", () => {}] };
     if (name === "./MessageBubble") return { MessageBubble: () => null };
+    if (name === "../api/browserSession") return { browserSessionKey: (key) => key };
     return require(name);
   },
 });
