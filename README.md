@@ -237,7 +237,7 @@ npm run build --prefix frontend
 
 | 检查 | 结果 |
 |---|---|
-| 后端 Pytest | **680 passed，7 skipped**（可选历史库回放） |
+| 后端 Pytest | **684 passed，7 skipped**（可选历史库回放） |
 | 前端测试 | **66 passed** |
 | TypeScript / Vite | **类型检查与构建通过** |
 | 真实 OCR HTTP 检查 | **JD 图片、简历图片、扫描 PDF 均返回 200**，中英文关键词可识别 |

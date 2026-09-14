@@ -16,7 +16,7 @@ npm run build --prefix frontend
 
 | 验证层 | 结果 | 覆盖范围 |
 |---|---:|---|
-| 公开源 Python 回归 | **680 passed、7 skipped**，0 failed/error，1 条外部弃用警告 | 状态图、评分协议、SQLite 账本、上传边界、匿名身份、OCR 安装路径与公共模型校验、隐私及错误路径 |
+| 公开源 Python 回归 | **684 passed、7 skipped**，0 failed/error，1 条外部弃用警告 | 状态图、评分协议、SQLite 账本、上传边界、匿名身份、OCR 安装路径与公共模型校验、隐私及错误路径 |
 | 前端协议与组件测试 | **66 passed** | 请求字段、会话状态、重复提交、环境隔离、失效凭据恢复和主要界面组件 |
 | TypeScript/Vite 构建 | **成功** | 类型检查和生产构建 |
 
@@ -71,6 +71,8 @@ npm run build --prefix frontend
 ### 公共模型与真实上传检查
 
 [`assets/ocr/models.json`](../assets/ocr/models.json) 固定了官方 `tessdata_best` 来源提交、文件大小与 SHA256；[`tests/test_ocr_installation.py`](../tests/test_ocr_installation.py) 检查随源码提供的两份模型、安装与运行时路径一致性、无下载复用、校验失败拒绝及现有模型保护。
+
+[`scripts/delivery_preflight.py`](../scripts/delivery_preflight.py) 对这两份大型模型执行固定官方 SHA256 校验，包括 Git 历史中的模型 blob；文件名相同但校验不同会被拒绝，未知大型文件仍保留“未扫描”状态。相关边界由 [`tests/test_delivery_preflight.py`](../tests/test_delivery_preflight.py) 验证。
 
 2026-09-14 在 Windows 的隔离临时数据环境中，使用真实 Tesseract、随源码提供的模型与 PDFium，通过本机 Uvicorn/HTTP 检查：
 

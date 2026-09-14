@@ -21,6 +21,10 @@ from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 ROOT = Path(__file__).resolve().parents[1]
+OFFICIAL_MODELS = {
+    "assets/ocr/tessdata/chi_sim.traineddata": "4fef2d1306c8e87616d4d3e4c6c67faf5d44be3342290cf8f2f0f6e3aa7e735b",
+    "assets/ocr/tessdata/eng.traineddata": "8280aed0782fe27257a68ea10fe7ef324ca0f8d85bd2fd145d1c2b560bcb66ba",
+}
 RULES = {
     "provider_key": re.compile(r"\b(?:sk-|tvly-)[A-Za-z0-9_-]{20,}"),
     "private_key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -99,11 +103,13 @@ def publication_scan():
         if b"\0" not in payload:
             working.extend(scan_text(payload.decode("utf-8", errors="replace"), relative))
         hashes[relative] = hashlib.sha256(payload).hexdigest()
+        if relative in OFFICIAL_MODELS and hashes[relative] != OFFICIAL_MODELS[relative]:
+            working.append({"path": relative, "rule": "official_model_checksum_mismatch", "line": None})
     objects = git("rev-list", "--objects", "--all").decode("utf-8").splitlines()
     paths = dict(row.split(" ", 1) if " " in row else (row, "<unmapped>") for row in objects)
     descriptions = git("cat-file", "--batch-check=%(objectname) %(objecttype) %(objectsize)",
                        input=("\n".join(paths) + "\n").encode()).decode().splitlines() if paths else []
-    historical, scanned, skipped = [], 0, []
+    historical, scanned, skipped, verified_models = [], 0, [], []
     for description in descriptions:
         object_id, kind, size = description.split()
         if kind != "blob":
@@ -112,6 +118,17 @@ def publication_scan():
         if private_path(relative):
             historical.append({"path": relative, "rule": "private_artifact_path", "line": None, "blob": object_id})
         if int(size) > 5 * 1024 * 1024:
+            # Only exact pinned official binaries receive a larger bounded read.
+            # A model filename alone must never bypass publication review.
+            if relative in OFFICIAL_MODELS and int(size) <= 32 * 1024 * 1024:
+                payload = git("cat-file", "blob", object_id)
+                scanned += 1
+                if len(payload) == int(size) and hashlib.sha256(payload).hexdigest() == OFFICIAL_MODELS[relative]:
+                    verified_models.append({"path": relative, "blob": object_id,
+                                            "sha256": OFFICIAL_MODELS[relative]})
+                    continue
+                historical.append({"path": relative, "rule": "official_model_checksum_mismatch",
+                                   "line": None, "blob": object_id})
             skipped.append({"blob": object_id, "reason": "over_5MiB"})
             continue
         payload = git("cat-file", "blob", object_id)
@@ -120,7 +137,8 @@ def publication_scan():
             historical.extend({**finding, "blob": object_id} for finding in scan_text(payload.decode("utf-8", errors="replace"), relative))
     return {"scope": "Git-candidate current files and every unique reachable historical blob from all refs. Unreachable objects, ignored private runtime data and semantic personal information are not audited.",
             "current_files": files, "current_findings": working, "history_blobs_read": scanned,
-            "history_findings": historical, "skipped_blobs": skipped, "current_file_hashes": hashes,
+            "history_findings": historical, "skipped_blobs": skipped,
+            "verified_official_model_blobs": verified_models, "current_file_hashes": hashes,
             "commit_count": int(git("rev-list", "--all", "--count").strip() or b"0")}
 
 
@@ -142,7 +160,8 @@ def main(argv=None):
                "history_findings": result["publication"]["history_findings"],
                "history_blobs_read": result["publication"]["history_blobs_read"],
                "commit_count": result["publication"]["commit_count"],
-               "skipped_blobs": len(result["publication"]["skipped_blobs"])}
+               "skipped_blobs": len(result["publication"]["skipped_blobs"]),
+               "verified_official_models": len(result["publication"]["verified_official_model_blobs"])}
     print(json.dumps(summary, ensure_ascii=False))
     return int(bool(summary["dependency_issues"] or summary["current_findings"] or summary["history_findings"] or summary["skipped_blobs"]))
 

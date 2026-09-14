@@ -1,5 +1,6 @@
 """Preflight checks operate on metadata and never print secret match values."""
 import importlib.util
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -57,3 +58,49 @@ def test_invalid_output_rejected_before_any_scan(preflight, tmp_path, monkeypatc
     with pytest.raises(SystemExit):
         preflight.main(["--output", str(target)])
     assert not (target / "preflight.json").exists()
+
+
+@pytest.mark.parametrize("case", ["official", "tampered", "unknown"])
+def test_large_historical_models_require_exact_pinned_content(preflight, tmp_path, monkeypatch, case):
+    payload = b"\0" + b"X" * (6 * 1024 * 1024)
+    name = "assets/ocr/tessdata/chi_sim.traineddata"
+    relative = name if case != "unknown" else "assets/ocr/unknown.binary"
+    expected = hashlib.sha256(payload if case != "tampered" else b"different").hexdigest()
+    monkeypatch.setattr(preflight, "OFFICIAL_MODELS", {name: expected})
+    monkeypatch.setattr(preflight, "ROOT", tmp_path)
+    reads = []
+    def fake_git(*args, input=None):
+        if args[0] == "ls-files": return b""
+        if args == ("rev-list", "--objects", "--all"):
+            return ("model-blob " + relative + "\n").encode()
+        if args[0] == "cat-file" and args[1].startswith("--batch-check"):
+            return ("model-blob blob " + str(len(payload)) + "\n").encode()
+        if args == ("cat-file", "blob", "model-blob"):
+            reads.append(1)
+            return payload
+        if args == ("rev-list", "--all", "--count"): return b"1"
+        raise AssertionError(args)
+    monkeypatch.setattr(preflight, "git", fake_git)
+    result = preflight.publication_scan()
+    assert len(result["verified_official_model_blobs"]) == int(case == "official")
+    assert len(result["skipped_blobs"]) == int(case != "official")
+    assert len(result["history_findings"]) == int(case == "tampered")
+    assert len(reads) == int(case != "unknown")
+
+
+def test_current_binary_model_with_wrong_checksum_is_rejected(preflight, tmp_path, monkeypatch):
+    name = "assets/ocr/tessdata/chi_sim.traineddata"
+    model = tmp_path / name
+    model.parent.mkdir(parents=True)
+    model.write_bytes(b"\0untrusted-model")
+    monkeypatch.setattr(preflight, "ROOT", tmp_path)
+    def fake_git(*args, input=None):
+        if args[0] == "ls-files": return name.encode() + b"\0"
+        if args == ("rev-list", "--objects", "--all"): return b""
+        if args == ("rev-list", "--all", "--count"): return b"1"
+        raise AssertionError(args)
+    monkeypatch.setattr(preflight, "git", fake_git)
+    result = preflight.publication_scan()
+    assert result["current_findings"] == [
+        {"path": name, "rule": "official_model_checksum_mismatch", "line": None}]
+    assert "untrusted-model" not in str(result)
