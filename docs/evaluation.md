@@ -88,7 +88,7 @@ npm run build --prefix frontend
 docker compose exec -T rolepilot python scripts/ocr_smoke.py
 ```
 
-手动模式使用 `.venv` 的 Python 执行相同脚本。该检查使用清晰、单栏、固定文字样本，证明依赖准备与上传链路能工作，不构成复杂版式、低清扫描或所有用户文档的准确率指标。
+手动模式使用 `.venv` 的 Python 执行相同脚本。该检查使用清晰、单栏、固定文字样本；扫描 PDF 以 300 DPI、高质量 JPEG 嵌入生成，避免将字体相关的有损压缩伪影作为依赖检查条件。它证明依赖准备与上传链路能工作，不构成复杂版式、低清扫描或所有用户文档的准确率指标。
 
 ## 题目守卫
 

@@ -49,7 +49,9 @@ def run(base_url: str, font_path: Path) -> dict:
             ("resume", "synthetic-scanned-resume.pdf", "PDF", "application/pdf"),
         ):
             data = io.BytesIO()
-            image.save(data, format=fmt, resolution=150)
+            # Pillow embeds JPEG in PDF. Use a high-quality 300-DPI fixture to
+            # avoid making font-dependent JPEG artifacts part of this smoke check.
+            image.save(data, format=fmt, resolution=300, quality=100, subsampling=0)
             response = client.post("/api/uploads/" + route,
                                    files={"file": (name, data.getvalue(), media)})
             response.raise_for_status()
@@ -57,7 +59,10 @@ def run(base_url: str, font_path: Path) -> dict:
             text = "".join(payload["text"].split())
             expected = ("岗位", "Python", "SQL")
             if not all(word in text for word in expected) or "ocr" not in payload["method"]:
-                raise RuntimeError("Synthetic OCR keywords or method missing for " + name)
+                missing = [word for word in expected if word not in text]
+                raise RuntimeError("Synthetic OCR check failed for " + name
+                                   + "; missing keywords=" + repr(missing)
+                                   + "; method=" + str(payload["method"]))
             results.append({"file": name, "status": response.status_code,
                             "method": payload["method"], "characters": len(text),
                             "expected_keywords_present": True})
