@@ -40,6 +40,7 @@ def public_source_files():
                 if path.suffix in SOURCE_SUFFIXES and not path.is_symlink():
                     paths.add(path)
     paths.update(path for path in (ROOT / "docs").glob("*.md") if path.is_file())
+    paths.update(path for path in (ROOT / "docs/assets").glob("*.svg") if path.is_file() and not path.is_symlink())
     return sorted(paths)
 
 

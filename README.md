@@ -1,8 +1,15 @@
 # RolePilot · 岗位定制面试 Agent
 
-[![Regression checks](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml)
+![RolePilot：岗位定制面试 Agent](docs/assets/banner.svg)
 
-RolePilot 是一个面向求职者的岗位定制面试练习系统。用户提供简历和目标岗位描述后，系统会提炼岗位要求、分析经历匹配度、生成岗位专属题单，并在回答后围绕能力缺口进行有限追问、讲解或换题，最后给出带回答证据的参考评估。
+[![CI](https://img.shields.io/github/actions/workflow/status/mar23jbyh-ctrl/rolepilot/ci.yml?branch=main&label=CI&logo=githubactions&logoColor=white)](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](docs/run.md)
+[![LangGraph](https://img.shields.io/badge/LangGraph-1.1.2-1C3C3C?logo=langgraph&logoColor=white)](docs/architecture.md)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](api/main.py)
+[![React + TypeScript](https://img.shields.io/badge/React%20%2B%20TypeScript-3178C6?logo=react&logoColor=white)](frontend/package.json)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+
+**基于 LangGraph 的岗位定制面试练习系统**：解析简历与 JD，结合 Tavily Web 检索生成岗位题单，通过有限追问与证据化评分，提供可恢复的多轮练习和岗位维度参考报告。
 
 项目采用 LangGraph 编排程序约束的工作流型单 Agent。模型负责分析、生成和提出建议；程序负责状态转移、题目版本、工具权限、追问上限、评分聚合、持久化和调用预算。Tavily 用于岗位 Web 检索增强；项目不包含本地向量数据库或内置题库。
 
@@ -10,14 +17,22 @@ RolePilot 是一个面向求职者的岗位定制面试练习系统。用户提�
 
 > RolePilot 用于个人面试练习，不用于招聘决策、背景调查或能力认证。评分是练习参考，不能替代专家评估。简历、岗位描述和回答文字会发送到你在配置中选择的模型服务；本地 OCR 不等于全流程离线。
 
+**快捷导航：** [核心亮点](#快速了解) · [功能](#功能) · [快速开始](#快速开始) · [Agent 架构](#架构) · [验证与证据](#开发者验证) · [深入文档](#深入证据) · [参与贡献](#参与贡献)
+
+---
+
 ## 快速了解
 
-如果只想判断项目是否适合自己，先看下面四件事：
+工程设计围绕多轮练习中最容易出错的四个环节展开：
 
-- 这是一个 **LangGraph 程序约束的工作流型单 Agent**，负责把简历/JD 分析、岗位 Web 调研、出题、追问和评估串成可恢复的面试流程。
-- 它的工程重点是 **可恢复的多轮会话、幂等回答协议、可校验评分聚合和调用预算治理**。
-- Tavily 提供岗位 Web 检索增强；项目定位为 Web 检索增强的岗位面试 Agent，不包含本地向量检索链路或内置题库。
-- 运行方式、架构、验证结果和数据边界分别见 [运行指南](docs/run.md)、[架构说明](docs/architecture.md)、[评测与证据](docs/evaluation.md) 和 [安全与隐私](docs/security.md)。
+| 核心设计 | 实现方式 | 对练习的作用 |
+|---|---|---|
+| **会话可恢复** | LangGraph 检查点在评估前暂停，沿同一线程恢复 | 刷新页面或重启后端后继续练习 |
+| **回答可靠提交** | 请求 ID、内容指纹、题目版本与 SQLite 事务处理权 | 处理重复请求、旧题回答和并发竞争 |
+| **评分可校验** | 模型给档位与原话证据，程序校验、换算、合并和加权 | 可复算评分口径，无效输出明确无分 |
+| **调用预算治理** | SDK 前上下文预检、逐次计量、整场额度与报告预留 | 为长对话提供预算边界和收尾路径 |
+
+实现细节见 [架构说明](docs/architecture.md)，测试范围见 [评测与证据](docs/evaluation.md)。
 
 ## 功能
 
@@ -190,7 +205,15 @@ npm test --prefix frontend
 npm run build --prefix frontend
 ```
 
-2026-09-14 公开回归结果：**659 项后端测试通过、7 项可选历史库回放跳过，41 项前端测试通过，构建成功**。测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与浏览器验收的范围见 [评测与证据](docs/evaluation.md)。
+2026-09-14 公开回归结果：
+
+| 检查 | 结果 |
+|---|---|
+| 后端 Pytest | **659 passed，7 skipped**（可选历史库回放） |
+| 前端测试 | **41 passed** |
+| TypeScript / Vite | **类型检查与构建通过** |
+
+测试使用合成材料和模型/搜索桩，验证程序行为；本机 HTTP、SQLite 与浏览器验收的范围见 [评测与证据](docs/evaluation.md)。最新远程结果可在 [GitHub Actions](https://github.com/mar23jbyh-ctrl/rolepilot/actions/workflows/ci.yml) 查看。
 
 还可执行不访问云端的本机 HTTP 集成验证：
 
@@ -230,3 +253,7 @@ docs/                        架构、评测、安全、运行和评分契约
 ## 许可
 
 项目代码采用 [MIT License](LICENSE)。第三方依赖、模型服务和测试资料的边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+## 参与贡献
+
+欢迎通过 [Issue](https://github.com/mar23jbyh-ctrl/rolepilot/issues) 反馈问题，或提交 [Pull Request](https://github.com/mar23jbyh-ctrl/rolepilot/pulls)。问题报告请附运行环境、复现步骤与脱敏后的错误信息；涉及简历、JD 或回答时，请使用合成材料。修改后按上面的验证命令运行相关测试，功能或配置变化请同步更新文档。

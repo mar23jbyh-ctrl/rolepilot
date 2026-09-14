@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">RolePilot — 岗位定制面试 Agent</title>
+  <desc id="desc">简历与 JD 分析、岗位 Web 调研、多轮面试与证据化评估。</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1224"/>
+      <stop offset="1" stop-color="#172d45"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="1" stop-color="#93c5fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="24" fill="url(#background)"/>
+  <circle cx="1110" cy="32" r="200" fill="#38bdf8" opacity=".04"/>
+  <circle cx="970" cy="292" r="150" fill="#5eead4" opacity=".04"/>
+  <rect x="56" y="48" width="44" height="5" rx="2.5" fill="url(#accent)"/>
+  <g font-family="Segoe UI, Microsoft YaHei, PingFang SC, sans-serif">
+    <text x="56" y="118" fill="#f8fafc" font-size="56" font-weight="700" letter-spacing="-1.5">RolePilot</text>
+    <text x="58" y="162" fill="#cbd5e1" font-size="24">岗位定制面试 Agent</text>
+    <text x="58" y="218" fill="#8fa6bd" font-size="18">简历 / JD 分析 · 岗位 Web 调研 · 多轮练习 · 证据化评估</text>
+    <text x="58" y="259" fill="#5eead4" font-size="13" letter-spacing="2">LANGGRAPH · FASTAPI · SQLITE</text>
+    <g transform="translate(790 74)">
+      <path d="M30 34H212M212 34V150H30V34" fill="none" stroke="#42647d" stroke-width="2"/>
+      <path d="M30 150H212" fill="none" stroke="#5eead4" stroke-width="2" stroke-dasharray="5 7"/>
+      <rect x="0" y="10" width="90" height="48" rx="12" fill="#172d45" stroke="#42647d"/>
+      <rect x="153" y="10" width="90" height="48" rx="12" fill="#172d45" stroke="#42647d"/>
+      <rect x="0" y="126" width="90" height="48" rx="12" fill="#172d45" stroke="#5eead4"/>
+      <rect x="153" y="126" width="90" height="48" rx="12" fill="#172d45" stroke="#42647d"/>
+      <g text-anchor="middle" font-size="16" fill="#e2e8f0">
+        <text x="45" y="40">分析</text>
+        <text x="198" y="40">出题</text>
+        <text x="45" y="156">反馈</text>
+        <text x="198" y="156">回答</text>
+      </g>
+      <circle cx="121" cy="150" r="5" fill="#5eead4"/>
+      <text x="121" y="103" text-anchor="middle" fill="#8fa6bd" font-size="12">可恢复的多轮练习</text>
+    </g>
+  </g>
+</svg>
