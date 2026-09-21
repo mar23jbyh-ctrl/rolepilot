@@ -1,0 +1,54 @@
+name: AuditMind validation gate
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch untrusted PR only as Git data
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]
+          [[ "$PR_HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]
+          git fetch --no-tags origin "refs/pull/${PR_NUMBER}/head"
+          test "$(git rev-parse FETCH_HEAD)" = "$PR_HEAD_SHA"
+      - name: Install trusted AuditMind wheel from base commit
+        run: python -m pip install .auditmind-tool/auditmind-0.1.0-py3-none-any.whl
+      - name: Review and publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUDITMIND_PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.deepseek.com/v1' }}
+          AUDITMIND_MODEL: ${{ vars.AUDITMIND_MODEL || 'deepseek-chat' }}
+        shell: bash
+        run: |
+          [[ "$PR_BASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$PR_HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]
+          if [[ -z "$OPENAI_API_KEY" ]]; then
+            echo 'OPENAI_API_KEY is not configured; explicit offline publication smoke test.'
+            auditmind review --repo . --base "$PR_BASE_SHA" --head "$PR_HEAD_SHA" \
+              --offline --publish-github
+          else
+            auditmind review --repo . --base "$PR_BASE_SHA" --head "$PR_HEAD_SHA" \
+              --online --publish-github
+          fi
